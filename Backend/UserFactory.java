@@ -9,7 +9,7 @@ public class UserFactory extends FileFactory<User>{
 	}
 
 	@Override
-	public User load(String t) {
+	public User load(String f) {
 		// TODO Auto-generated method stub
 		return null;
 	}
