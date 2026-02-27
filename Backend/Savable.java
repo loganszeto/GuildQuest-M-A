@@ -1,7 +1,5 @@
-package Backend;
+package backend;
 
-public interface Savable<T>{
-	public T load();
+public interface Savable{
 	public String save();
-	
 }
