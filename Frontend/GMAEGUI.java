@@ -2,87 +2,92 @@ package gmae;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class GMAEGUI extends JFrame {
     private LoginScreen loginScreen;
+    private AdventureMenuScreen adventureMenuScreen;
     private JPanel mainPanel;
     private CardLayout cardLayout;
     
-    // Constants for card names (ready for future expansion)
     public static final String LOGIN_CARD = "LOGIN";
+    public static final String ADVENTURE_MENU_CARD = "ADVENTURE_MENU";
     
     public GMAEGUI() {
-        // Initialize GUI components
         initializeComponents();
-        
-        // Setup the main frame
         setupFrame();
-        
-        // Show login screen by default
         showLoginScreen();
     }
     
     private void initializeComponents() {
-        // Create main panel with card layout (ready for future screens)
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         
-        // Initialize login screen
         loginScreen = new LoginScreen(this);
+        adventureMenuScreen = new AdventureMenuScreen(this);
         
-        // Add login screen to card layout
         mainPanel.add(loginScreen, LOGIN_CARD);
+        mainPanel.add(adventureMenuScreen, ADVENTURE_MENU_CARD);
     }
     
     private void setupFrame() {
-        setTitle("GuildQuest Mini-Adventure Environment");
+        setTitle("GuildQuest - Mini Adventure Environment");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
-        setLocationRelativeTo(null); // Center on screen
+        setSize(900, 700);
+        setLocationRelativeTo(null);
         
-        // Add main panel to frame
+        try {
+            setIconImage(createGameIcon());
+        } catch (Exception e) {
+        }
+        
         add(mainPanel);
     }
     
-    /**
-     * Show the login screen
-     */
     public void showLoginScreen() {
         cardLayout.show(mainPanel, LOGIN_CARD);
     }
     
-    /**
-     * Placeholder methods for future implementation
-     * These will be implemented as you add more screens
-     */
     public void showAdventureMenu() {
-        // TODO: Implement when AdventureMenuScreen is ready
+        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
+    }
+  
+      public void showAdventureScreen() {
         JOptionPane.showMessageDialog(this, 
-            "Adventure Menu coming soon!", 
-            "Feature Not Implemented", 
+            "Adventure gameplay coming soon!", 
+            "Into the Dungeon", 
             JOptionPane.INFORMATION_MESSAGE);
     }
   
-    /**
-     * Launch the application
-     */
-    public void launch() {
+      public void launch() {
         setVisible(true);
     }
     
-    /**
-     * Main method to launch the application
-     */
+    private Image createGameIcon() {
+        BufferedImage icon = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = icon.createGraphics();
+        
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        g2d.setColor(new Color(255, 215, 0));
+        g2d.fillRect(14, 2, 4, 20);
+        g2d.fillRect(12, 20, 8, 4);
+        g2d.fillRect(14, 24, 4, 6);
+        
+        g2d.dispose();
+        return icon;
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                // Set a modern look and feel
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
-            new GMAEGUI().launch();
+            GMAEGUI game = new GMAEGUI();
+            game.launch();
         });
     }
 }
