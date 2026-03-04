@@ -1,16 +1,8 @@
 package backend;
 
-public class CampaignFactory extends FileFactory<Campaign>{
-
-	@Override
-	public void save(Campaign obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+public class CampaignFactory{
+	//does not inherit from FileFactory, because Campaigns will not user serialization.
 	public Campaign load(String f) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
