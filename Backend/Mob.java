@@ -1,12 +1,15 @@
 package backend;
 
-public abstract class Mob extends Tile{
-	private static boolean occupying = true;
-	public Mob(int x, int y) {
-		super(x, y);
-	}
+import java.awt.Point;
 
-	private void move(int x, int y) {
+public abstract class Mob extends Tile{
+	public Mob(Point p) {
+		super(p);
+	}
+	public boolean isOccupying() {
+		return true;
+	}
+	public void move(int x, int y) {
 		setX(getX()+x);
 		setY(getY()+y);
 	}

@@ -1,5 +1,9 @@
 package backend;
 
-public class TileFactory<T extends Tile> {
-	
+import java.awt.Point;
+
+public class TileFactory{
+	public static Ground makeTile(Point p) {
+		return new Ground(p);
+	}
 }
