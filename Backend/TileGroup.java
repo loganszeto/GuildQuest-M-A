@@ -4,7 +4,6 @@ import java.awt.Point;
 
 public class TileGroup<T extends Tile> extends Tile{
 	private Point p2;
-	TileFactory tf = new TileFactory();
 	private T representative;
 	
 	public TileGroup(Point p1, Point p2, T repr) {

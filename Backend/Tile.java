@@ -23,4 +23,7 @@ public abstract class Tile {
 	public void setY(int y) {
 		p1.setLocation(p1.getX(), y);
 	}
+	public boolean inBounds(Point p) {
+        return p.equals(p1);
+	}
 }
