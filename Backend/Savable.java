@@ -1,5 +1,6 @@
 package backend;
+import java.io.Serializable;
 
-public interface Savable{
+public interface Savable extends Serializable{
 	public String save();
 }
