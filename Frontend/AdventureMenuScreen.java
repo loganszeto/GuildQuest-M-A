@@ -6,38 +6,62 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import backend.RealmSpace;
 
 public class AdventureMenuScreen extends JPanel {
     private GMAEGUI mainGUI;
     private JButton addQuestButton;
     private JButton backButton;
+    private JButton startAdventureButton;
+    private JButton viewMapButton;
     private JLabel titleLabel;
-    private JList<Quest> questList;
-    private DefaultListModel<Quest> questListModel;
-    private JButton startQuestButton;
-    private JButton deleteQuestButton;
+    private JList<MiniAdventure> adventureList;
+    private DefaultListModel<MiniAdventure> adventureListModel;
+    private JButton deleteAdventureButton;
     private JRadioButton competitiveRadio;
     private JRadioButton coOpRadio;
     private ButtonGroup modeGroup;
+    private JComboBox<RealmSpace> realmSelector;
+    private JLabel currentRealmLabel;
+    
+    // Player profiles
+    private PlayerProfile player1;
+    private PlayerProfile player2;
+    
+    // Game manager
+    private TwoPlayerGameManager gameManager;
     
     public AdventureMenuScreen(GMAEGUI mainGUI) {
         this.mainGUI = mainGUI;
+        this.gameManager = new TwoPlayerGameManager();
         initializeComponents();
         setupLayout();
         setupEventHandlers();
-        loadDefaultQuests();
+        loadDefaultAdventures();
+    }
+    
+    public void setPlayers(PlayerProfile player1, PlayerProfile player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+        updateButtonStates();
     }
     
     private void initializeComponents() {
-        addQuestButton = new JButton("Add Quest");
+        addQuestButton = new JButton("Add Adventure");
         backButton = new JButton("Retreat");
-        titleLabel = new JLabel("Quest Board");
-        startQuestButton = new JButton("Begin Selected Quest");
-        deleteQuestButton = new JButton("Delete Quest");
+        startAdventureButton = new JButton("Begin Selected Adventure");
+        viewMapButton = new JButton("View Map");
+        titleLabel = new JLabel("Mini-Adventure Menu");
+        deleteAdventureButton = new JButton("Delete Adventure");
         
         competitiveRadio = new JRadioButton("Competitive");
         coOpRadio = new JRadioButton("Co-op");
         modeGroup = new ButtonGroup();
+        
+        realmSelector = new JComboBox<>();
+        currentRealmLabel = new JLabel("Current Realm: None Selected");
         
         competitiveRadio.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         competitiveRadio.setForeground(new Color(255, 215, 0));
@@ -51,18 +75,21 @@ public class AdventureMenuScreen extends JPanel {
         modeGroup.add(competitiveRadio);
         modeGroup.add(coOpRadio);
         
-        questListModel = new DefaultListModel<>();
-        questList = new JList<>(questListModel);
-        questList.setBackground(new Color(60, 60, 100));
-        questList.setForeground(Color.WHITE);
-        questList.setFont(new Font("Arial", Font.PLAIN, 14));
-        questList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        questList.setBorder(BorderFactory.createLineBorder(new Color(255, 215, 0), 1));
+        adventureListModel = new DefaultListModel<>();
+        adventureList = new JList<>(adventureListModel);
+        adventureList.setBackground(new Color(60, 60, 100));
+        adventureList.setForeground(Color.WHITE);
+        adventureList.setFont(new Font("Arial", Font.PLAIN, 14));
+        adventureList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        adventureList.setBorder(BorderFactory.createLineBorder(new Color(255, 215, 0), 1));
         
         styleButton(addQuestButton);
         styleButton(backButton);
-        styleButton(startQuestButton);
-        styleButton(deleteQuestButton);
+        styleButton(startAdventureButton);
+        styleButton(viewMapButton);
+        styleButton(deleteAdventureButton);
+        
+        loadRealms();
     }
     
     private void setupLayout() {
@@ -74,6 +101,13 @@ public class AdventureMenuScreen extends JPanel {
         titleLabel.setForeground(new Color(255, 215, 0));
         titlePanel.add(titleLabel);
         
+        JPanel realmPanel = new JPanel(new FlowLayout());
+        realmPanel.setBackground(new Color(25, 25, 60));
+        realmPanel.add(new JLabel("Select Realm:"));
+        realmPanel.add(realmSelector);
+        realmPanel.add(currentRealmLabel);
+        titlePanel.add(realmPanel);
+        
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(new Color(45, 45, 80));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -84,14 +118,14 @@ public class AdventureMenuScreen extends JPanel {
             BorderFactory.createLineBorder(new Color(255, 215, 0), 2),
             BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(new Color(200, 150, 50), 1),
-                "Available Quests",
+                "Available Mini-Adventures",
                 0, 0,
                 new Font("Old English Text MT", Font.BOLD, 18),
                 new Color(255, 215, 0)
             )
         ));
         
-        JScrollPane scrollPane = new JScrollPane(questList);
+        JScrollPane scrollPane = new JScrollPane(adventureList);
         scrollPane.setPreferredSize(new Dimension(400, 300));
         questPanel.add(scrollPane, BorderLayout.CENTER);
         
@@ -104,13 +138,14 @@ public class AdventureMenuScreen extends JPanel {
         
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         buttonPanel.setBackground(new Color(35, 35, 70));
-        buttonPanel.add(startQuestButton);
-        buttonPanel.add(deleteQuestButton);
+        buttonPanel.add(startAdventureButton);
+        buttonPanel.add(deleteAdventureButton);
         questPanel.add(buttonPanel, BorderLayout.SOUTH);
         
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         controlPanel.setBackground(new Color(45, 45, 80));
         controlPanel.add(addQuestButton);
+        controlPanel.add(viewMapButton);
         
         centerPanel.add(questPanel, BorderLayout.CENTER);
         centerPanel.add(controlPanel, BorderLayout.NORTH);
@@ -140,21 +175,21 @@ public class AdventureMenuScreen extends JPanel {
         addQuestButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleAddQuest();
+                handleAddAdventure();
             }
         });
         
-        startQuestButton.addActionListener(new ActionListener() {
+        startAdventureButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleStartQuest();
+                handleStartAdventure();
             }
         });
         
-        deleteQuestButton.addActionListener(new ActionListener() {
+        deleteAdventureButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleDeleteQuest();
+                handleDeleteAdventure();
             }
         });
         
@@ -165,116 +200,214 @@ public class AdventureMenuScreen extends JPanel {
             }
         });
         
-        questList.addListSelectionListener(e -> {
+        viewMapButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleViewMap();
+            }
+        });
+        
+        adventureList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 updateButtonStates();
             }
         });
+        
+        realmSelector.addActionListener(e -> {
+            updateCurrentRealm();
+            filterAdventuresByRealm();
+        });
     }
     
-    private void loadDefaultQuests() {
-        questListModel.addElement(new Quest("Relic Hunt", 
-            "Ancient artifacts are scattered throughout the realm. Heroes must compete or cooperate to collect these valuable relics.", 
-            "Moderate", "30-60 minutes", true));
+    private void loadDefaultAdventures() {
+        final RealmSpace defaultRealm;
+        RealmSpace selectedRealm = (RealmSpace) realmSelector.getSelectedItem();
+        if (selectedRealm == null) {
+            defaultRealm = new RealmSpace("Mystic Realms");
+        } else {
+            defaultRealm = selectedRealm;
+        }
         
-        questListModel.addElement(new Quest("Timed Raid Window", 
-            "The ancient dungeon is only accessible during specific celestial alignments. Complete objectives before the window closes!", 
-            "Hard", "45 minutes", false));
+        adventureListModel.addElement(new RelicHuntAdventure());
+        
+        // Add more sample adventures
+        adventureListModel.addElement(new MiniAdventure() {
+            @Override
+            public void initialize(PlayerProfile p1, PlayerProfile p2, Map<String, Object> settings) {}
+            @Override
+            public void start() {}
+            @Override
+            public boolean acceptPlayerInput(int playerNum, String input) { return false; }
+            @Override
+            public void advanceTurn() {}
+            @Override
+            public Map<String, Object> getCurrentState() { return new HashMap<>(); }
+            @Override
+            public boolean isComplete() { return false; }
+            @Override
+            public int getWinner() { return 0; }
+            @Override
+            public void reset() {}
+            @Override
+            public String getName() { return "Timed Raid"; }
+            @Override
+            public String getDescription() { return "Complete objectives before time runs out!"; }
+            @Override
+            public RealmSpace getRealm() { return defaultRealm; }
+            @Override
+            public boolean supportsCoOp() { return true; }
+            @Override
+            public boolean supportsCompetitive() { return false; }
+            @Override
+            public String toString() { return getName(); } // Fix display name
+        });
     }
     
-    private void handleAddQuest() {
-        JTextField nameField = new JTextField();
-        JTextArea descArea = new JTextArea(4, 20);
-        JTextField difficultyField = new JTextField();
-        JTextField durationField = new JTextField();
-        JCheckBox supportsModesCheckBox = new JCheckBox("Supports Competitive/Co-op modes");
-        supportsModesCheckBox.setSelected(true);
+    private void loadRealms() {
+        realmSelector.addItem(new RealmSpace("Mystic Realms"));
+        realmSelector.addItem(new RealmSpace("Shadowlands"));
+        realmSelector.addItem(new RealmSpace("Crystal Mountains"));
+        realmSelector.addItem(new RealmSpace("Dragon's Lair"));
         
-        JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
-        panel.add(new JLabel("Quest Name:"));
-        panel.add(nameField);
-        panel.add(new JLabel("Description:"));
-        panel.add(new JScrollPane(descArea));
-        panel.add(new JLabel("Difficulty:"));
-        panel.add(difficultyField);
-        panel.add(new JLabel("Duration:"));
-        panel.add(durationField);
-        panel.add(supportsModesCheckBox);
-        
-        int result = JOptionPane.showConfirmDialog(this, panel, "Add New Quest", 
-            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        
-        if (result == JOptionPane.OK_OPTION) {
-            String name = nameField.getText().trim();
-            String description = descArea.getText().trim();
-            String difficulty = difficultyField.getText().trim();
-            String duration = durationField.getText().trim();
-            
-            if (!name.isEmpty() && !description.isEmpty()) {
-                Quest newQuest = new Quest(name, description, difficulty, duration, supportsModesCheckBox.isSelected());
-                questListModel.addElement(newQuest);
-            } else {
-                JOptionPane.showMessageDialog(this, "Please fill in at least the name and description!", 
-                    "Missing Information", JOptionPane.WARNING_MESSAGE);
-            }
+        if (realmSelector.getItemCount() > 0) {
+            realmSelector.setSelectedIndex(0);
         }
     }
     
-    private void handleStartQuest() {
-        Quest selectedQuest = questList.getSelectedValue();
-        if (selectedQuest == null) return;
-        
-        String mode = competitiveRadio.isSelected() ? "Competitive" : "Co-op";
-        String message = "Starting " + selectedQuest.getName() + " in " + mode + " mode!\n\n" + selectedQuest.getDescription();
-        
-        if (selectedQuest.supportsModes()) {
-            message += "\n\nMode: " + mode;
+    private void updateCurrentRealm() {
+        RealmSpace selectedRealm = (RealmSpace) realmSelector.getSelectedItem();
+        if (selectedRealm != null) {
+            currentRealmLabel.setText("Current Realm: " + selectedRealm.getName());
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(
-            this,
-            message + "\n\nThis adventure cannot be paused once started.",
-            "Begin " + selectedQuest.getName(),
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-        );
-        
-        if (confirm == JOptionPane.YES_OPTION) {
+    }
+    
+    private void filterAdventuresByRealm() {
+        // For now, just show all adventures
+        // Could be extended to filter by realm
+    }
+    
+    private void handleAddAdventure() {
+        JOptionPane.showMessageDialog(this, 
+            "Add Adventure feature coming soon!\n\nFor now, try the included Relic Hunt adventure.", 
+            "Add Adventure", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void handleStartAdventure() {
+        if (player1 == null || player2 == null) {
             JOptionPane.showMessageDialog(this, 
-                selectedQuest.getName() + " starting soon!\n\nThe adventure awaits...", 
-                "Quest Accepted!", 
-                JOptionPane.INFORMATION_MESSAGE);
+                "Please ensure both players are logged in before starting an adventure.", 
+                "Players Required", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        MiniAdventure selectedAdventure = adventureList.getSelectedValue();
+        if (selectedAdventure == null) return;
+        
+        boolean isCompetitive = competitiveRadio.isSelected();
+        
+        // Check if adventure supports the selected mode
+        if (isCompetitive && !selectedAdventure.supportsCompetitive()) {
+            JOptionPane.showMessageDialog(this, 
+                "This adventure doesn't support competitive mode. Try co-op mode!", 
+                "Mode Not Supported", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (!isCompetitive && !selectedAdventure.supportsCoOp()) {
+            JOptionPane.showMessageDialog(this, 
+                "This adventure doesn't support co-op mode. Try competitive mode!", 
+                "Mode Not Supported", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Set up and start the game
+        boolean success = gameManager.setupGame(player1, player2, selectedAdventure, isCompetitive);
+        
+        if (success) {
+            String message = "Starting " + selectedAdventure.getName() + "!\n\n" + 
+                selectedAdventure.getDescription() + "\n\n" +
+                "Mode: " + (isCompetitive ? "Competitive" : "Co-op") + "\n" +
+                "Player 1: " + player1.getCharacterName() + "\n" +
+                "Player 2: " + player2.getCharacterName();
             
-            mainGUI.showAdventureScreen();
+            JOptionPane.showMessageDialog(this, message, 
+                "Adventure Starting!", JOptionPane.INFORMATION_MESSAGE);
+            
+            // For now, just show a simple game screen
+            showAdventureGameScreen(selectedAdventure);
         }
     }
     
-    private void handleDeleteQuest() {
-        Quest selectedQuest = questList.getSelectedValue();
-        if (selectedQuest == null) return;
+    private void showAdventureGameScreen(MiniAdventure adventure) {
+        // Create a simple game screen
+        JFrame gameFrame = new JFrame(adventure.getName());
+        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        gameFrame.setSize(800, 600);
+        gameFrame.setLocationRelativeTo(this);
+        
+        JPanel gamePanel = new JPanel(new BorderLayout());
+        gamePanel.setBackground(new Color(25, 25, 60));
+        
+        // Game info
+        JLabel infoLabel = new JLabel("<html><div style='color: gold; font-family: Arial; font-size: 14px;'>" +
+            "Adventure: " + adventure.getName() + "<br>" +
+            "Mode: " + (gameManager.isCompetitive() ? "Competitive" : "Co-op") + "<br>" +
+            "Current Turn: Player " + gameManager.getCurrentPlayerTurn() + "<br>" +
+            "Use WASD or Arrow Keys to move<br>" +
+            "Close this window to return to menu</div></html>");
+        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        gamePanel.add(infoLabel, BorderLayout.NORTH);
+        
+        // Add realm map
+        RealmMapPanel mapPanel = new RealmMapPanel(adventure.getRealm());
+        gamePanel.add(mapPanel, BorderLayout.CENTER);
+        
+        // Control buttons
+        JPanel controlPanel = new JPanel();
+        controlPanel.setBackground(new Color(25, 25, 60));
+        
+        JButton resetButton = new JButton("Reset Adventure");
+        resetButton.addActionListener(e -> {
+            gameManager.resetGame();
+            JOptionPane.showMessageDialog(gameFrame, "Adventure reset!");
+        });
+        
+        controlPanel.add(resetButton);
+        gamePanel.add(controlPanel, BorderLayout.SOUTH);
+        
+        gameFrame.add(gamePanel);
+        gameFrame.setVisible(true);
+    }
+    
+    private void handleDeleteAdventure() {
+        MiniAdventure selectedAdventure = adventureList.getSelectedValue();
+        if (selectedAdventure == null) return;
         
         int confirm = JOptionPane.showConfirmDialog(
             this,
-            "Are you sure you want to delete \"" + selectedQuest.getName() + "\"?",
-            "Delete Quest",
+            "Are you sure you want to delete \"" + selectedAdventure.getName() + "\"?",
+            "Delete Adventure",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE
         );
         
         if (confirm == JOptionPane.YES_OPTION) {
-            questListModel.removeElement(selectedQuest);
+            adventureListModel.removeElement(selectedAdventure);
         }
     }
     
     private void updateButtonStates() {
-        boolean hasSelection = questList.getSelectedValue() != null;
-        startQuestButton.setEnabled(hasSelection);
-        deleteQuestButton.setEnabled(hasSelection);
+        boolean hasSelection = adventureList.getSelectedValue() != null;
+        boolean hasPlayers = player1 != null && player2 != null;
+        
+        startAdventureButton.setEnabled(hasSelection && hasPlayers);
+        deleteAdventureButton.setEnabled(hasSelection);
         
         if (hasSelection) {
-            Quest selectedQuest = questList.getSelectedValue();
-            competitiveRadio.setEnabled(selectedQuest.supportsModes());
-            coOpRadio.setEnabled(selectedQuest.supportsModes());
+            MiniAdventure selectedAdventure = adventureList.getSelectedValue();
+            competitiveRadio.setEnabled(selectedAdventure.supportsCompetitive());
+            coOpRadio.setEnabled(selectedAdventure.supportsCoOp());
         } else {
             competitiveRadio.setEnabled(false);
             coOpRadio.setEnabled(false);
@@ -293,30 +426,26 @@ public class AdventureMenuScreen extends JPanel {
         mainGUI.showLoginScreen();
     }
     
-    public static class Quest {
-        private String name;
-        private String description;
-        private String difficulty;
-        private String duration;
-        private boolean supportsModes;
-        
-        public Quest(String name, String description, String difficulty, String duration, boolean supportsModes) {
-            this.name = name;
-            this.description = description;
-            this.difficulty = difficulty;
-            this.duration = duration;
-            this.supportsModes = supportsModes;
+    private void handleViewMap() {
+        RealmSpace currentRealm = (RealmSpace) realmSelector.getSelectedItem();
+        if (currentRealm == null) {
+            currentRealm = new RealmSpace("Mystic Realms");
         }
         
-        public String getName() { return name; }
-        public String getDescription() { return description; }
-        public String getDifficulty() { return difficulty; }
-        public String getDuration() { return duration; }
-        public boolean supportsModes() { return supportsModes; }
+        RealmMapPanel mapPanel = new RealmMapPanel(currentRealm);
+        JScrollPane scrollPane = new JScrollPane(mapPanel);
         
-        @Override
-        public String toString() {
-            return name + " (" + difficulty + ") - " + duration;
-        }
+        JFrame mapFrame = new JFrame("Realm Map: " + currentRealm.getName());
+        mapFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mapFrame.setSize(800, 600);
+        mapFrame.setLocationRelativeTo(this);
+        
+        JLabel infoLabel = new JLabel("Click tiles to inspect them");
+        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        mapFrame.add(infoLabel, BorderLayout.NORTH);
+        mapFrame.add(scrollPane, BorderLayout.CENTER);
+        
+        mapFrame.setVisible(true);
     }
 }

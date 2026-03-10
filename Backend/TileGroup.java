@@ -26,6 +26,35 @@ public class TileGroup<T extends Tile> extends Tile{
 	}
 	
 	public boolean onEdge(Point p) {
-		return inBounds(p) && (p.x == p1.x || p.x == p2.x || p.y == p1.x || p.y == p2.y);
+		return inBounds(p) && (p.x == p1.x || p.x == p2.x || p.y == p1.y || p.y == p2.y);
+	}
+	
+	// Helper methods for map visualization
+	public Point getSecondPoint() {
+		return p2;
+	}
+	
+	public int getWidth() {
+		return Math.abs(p2.x - p1.x) + 1;
+	}
+	
+	public int getHeight() {
+		return Math.abs(p2.y - p1.y) + 1;
+	}
+	
+	public int getMinX() {
+		return Math.min(p1.x, p2.x);
+	}
+	
+	public int getMaxX() {
+		return Math.max(p1.x, p2.x);
+	}
+	
+	public int getMinY() {
+		return Math.min(p1.y, p2.y);
+	}
+	
+	public int getMaxY() {
+		return Math.max(p1.y, p2.y);
 	}
 }

@@ -5,13 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Simple login screen for GMAE - just gets two Player names
+ */
 public class LoginScreen extends JPanel {
     private GMAEGUI mainGUI;
     private JTextField playerOneField;
     private JTextField playerTwoField;
     private JButton submitButton;
-    private JButton backButton;
-    private JLabel titleLabel;
     
     public LoginScreen(GMAEGUI mainGUI) {
         this.mainGUI = mainGUI;
@@ -21,126 +22,99 @@ public class LoginScreen extends JPanel {
     }
     
     private void initializeComponents() {
-        playerOneField = new JTextField(20);
-        playerTwoField = new JTextField(20);
+        playerOneField = new JTextField(15);
+        playerTwoField = new JTextField(15);
         submitButton = new JButton("Begin Quest");
-        backButton = new JButton("Retreat");
-        titleLabel = new JLabel("GuildQuest - Mini Adventure Environment");
         
-        playerOneField.setText("Enter Player Name");
-        playerTwoField.setText("Enter Player Name");
-    }
-    
-    private void setupLayout() {
-        setLayout(new BorderLayout());
-        
-
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(25, 25, 60));
-        titleLabel.setFont(new Font("Old English Text MT", Font.BOLD, 28));
-        titleLabel.setForeground(new Color(255, 215, 0));
-        titlePanel.add(titleLabel);
-        
-  
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(new Color(45, 45, 80));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        
-
-        JPanel loginForm = new JPanel(new GridBagLayout());
-        loginForm.setBackground(new Color(35, 35, 70));
-        loginForm.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(255, 215, 0), 2),
-            BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(200, 150, 50), 1),
-                "Enter the Realm",
-                0, 0,
-                new Font("Old English Text MT", Font.BOLD, 18),
-                new Color(255, 215, 0)
-            )
-        ));
-        
-        GridBagConstraints gbcForm = new GridBagConstraints();
-        gbcForm.insets = new Insets(8, 8, 8, 8);
-        gbcForm.fill = GridBagConstraints.HORIZONTAL;
-        
-
-        gbcForm.gridx = 0;
-        gbcForm.gridy = 0;
-        JLabel playerOneLabel = new JLabel("Player I:");
-        playerOneLabel.setFont(new Font("Old English Text MT", Font.BOLD, 16));
-        playerOneLabel.setForeground(new Color(255, 215, 0));
-        loginForm.add(playerOneLabel, gbcForm);
-        
-        gbcForm.gridx = 1;
-        gbcForm.gridy = 0;
+        // Match AdventureMenuScreen field styling
         playerOneField.setBackground(new Color(60, 60, 100));
         playerOneField.setForeground(Color.WHITE);
         playerOneField.setBorder(BorderFactory.createLineBorder(new Color(255, 215, 0), 1));
         playerOneField.setFont(new Font("Arial", Font.PLAIN, 14));
-        loginForm.add(playerOneField, gbcForm);
+        playerOneField.setPreferredSize(new Dimension(200, 30));
         
-    
-        gbcForm.gridx = 0;
-        gbcForm.gridy = 1;
-        JLabel playerTwoLabel = new JLabel("Player II:");
-        playerTwoLabel.setFont(new Font("Old English Text MT", Font.BOLD, 16));
-        playerTwoLabel.setForeground(new Color(255, 215, 0));
-        loginForm.add(playerTwoLabel, gbcForm);
-        
-        gbcForm.gridx = 1;
-        gbcForm.gridy = 1;
         playerTwoField.setBackground(new Color(60, 60, 100));
         playerTwoField.setForeground(Color.WHITE);
         playerTwoField.setBorder(BorderFactory.createLineBorder(new Color(255, 215, 0), 1));
         playerTwoField.setFont(new Font("Arial", Font.PLAIN, 14));
-        loginForm.add(playerTwoField, gbcForm);
+        playerTwoField.setPreferredSize(new Dimension(200, 30));
         
-        gbcForm.gridx = 0;
-        gbcForm.gridy = 2;
-        gbcForm.gridwidth = 2;
-        gbcForm.anchor = GridBagConstraints.CENTER;
-        
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        buttonPanel.setBackground(new Color(35, 35, 70));
-        
+        // Match AdventureMenuScreen button styling
         submitButton.setBackground(new Color(200, 50, 50));
         submitButton.setForeground(Color.WHITE);
-        submitButton.setFont(new Font("Old English Text MT", Font.BOLD, 16));
+        submitButton.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         submitButton.setBorder(BorderFactory.createLineBorder(new Color(255, 100, 100), 2));
+        submitButton.setPreferredSize(new Dimension(200, 35));
         submitButton.setFocusPainted(false);
+        submitButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }
+    
+    private void setupLayout() {
+        setLayout(new BorderLayout());
+        setBackground(new Color(25, 25, 60)); // Match AdventureMenuScreen title panel
         
-        backButton.setBackground(new Color(100, 100, 100));
-        backButton.setForeground(Color.WHITE);
-        backButton.setFont(new Font("Old English Text MT", Font.BOLD, 16));
-        backButton.setBorder(BorderFactory.createLineBorder(new Color(150, 150, 150), 2));
-        backButton.setFocusPainted(false);
+        // Title
+        JLabel titleLabel = new JLabel("GuildQuest - Mini Adventure Environment");
+        titleLabel.setFont(new Font("Old English Text MT", Font.BOLD, 28)); // Match AdventureMenuScreen
+        titleLabel.setForeground(new Color(255, 215, 0)); // Gold color
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(30, 30, 20, 30));
+        add(titleLabel, BorderLayout.NORTH);
         
-        buttonPanel.add(submitButton);
-        buttonPanel.add(backButton);
-        loginForm.add(buttonPanel, gbcForm);
+        // Main login form
+        JPanel loginPanel = new JPanel(new GridBagLayout());
+        loginPanel.setBackground(new Color(45, 45, 80)); // Match AdventureMenuScreen center panel
+        loginPanel.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
         
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        
+        // Title for login form
+        JLabel loginTitle = new JLabel("Enter the Realm");
+        loginTitle.setFont(new Font("Old English Text MT", Font.BOLD, 18)); // Match AdventureMenuScreen
+        loginTitle.setForeground(new Color(255, 215, 0)); // Gold color
         gbc.gridx = 0;
         gbc.gridy = 0;
-        centerPanel.add(loginForm, gbc);
+        gbc.gridwidth = 2;
+        loginPanel.add(loginTitle, gbc);
         
-      
-        add(titlePanel, BorderLayout.NORTH);
-        add(centerPanel, BorderLayout.CENTER);
+        // Player 1 field
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        JLabel player1Label = new JLabel("Player I:");
+        player1Label.setFont(new Font("Old English Text MT", Font.BOLD, 16)); // Match AdventureMenuScreen
+        player1Label.setForeground(new Color(255, 215, 0)); // Gold color
+        loginPanel.add(player1Label, gbc);
         
-      
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(25, 25, 60));
-        bottomPanel.setPreferredSize(new Dimension(0, 60));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        loginPanel.add(playerOneField, gbc);
         
-        JLabel mottoLabel = new JLabel("Adventure Awaits the Brave");
-        mottoLabel.setFont(new Font("Old English Text MT", Font.BOLD, 16));
-        mottoLabel.setForeground(new Color(255, 215, 0));
-        bottomPanel.add(mottoLabel);
+        // Player 2 field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0.0;
+        gbc.gridwidth = 1;
+        JLabel player2Label = new JLabel("Player II:");
+        player2Label.setFont(new Font("Old English Text MT", Font.BOLD, 16)); // Match AdventureMenuScreen
+        player2Label.setForeground(new Color(255, 215, 0)); // Gold color
+        loginPanel.add(player2Label, gbc);
         
-        add(bottomPanel, BorderLayout.SOUTH);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        loginPanel.add(playerTwoField, gbc);
+        
+        // Button
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.weightx = 0.0;
+        gbc.fill = GridBagConstraints.NONE;
+        loginPanel.add(submitButton, gbc);
+        
+        add(loginPanel, BorderLayout.CENTER);
     }
     
     private void setupEventHandlers() {
@@ -150,61 +124,30 @@ public class LoginScreen extends JPanel {
                 handleSubmit();
             }
         });
-        
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                playerOneField.setText("Enter Player Name");
-                playerTwoField.setText("Enter Player Name");
-            }
-        });
-        
-
-        playerOneField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                if (playerOneField.getText().equals("Enter Player Name")) {
-                    playerOneField.setText("");
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                if (playerOneField.getText().isEmpty()) {
-                    playerOneField.setText("Enter Player Name");
-                }
-            }
-        });
-        
-        playerTwoField.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                if (playerTwoField.getText().equals("Enter Player Name")) {
-                    playerTwoField.setText("");
-                }
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                if (playerTwoField.getText().isEmpty()) {
-                    playerTwoField.setText("Enter Player Name");
-                }
-            }
-        });
     }
     
     private void handleSubmit() {
-        String playerOneUsername = playerOneField.getText().trim();
-        String playerTwoUsername = playerTwoField.getText().trim();
-   
-        if (playerOneUsername.isEmpty() || playerOneUsername.equals("Enter Player Name") ||
-            playerTwoUsername.isEmpty() || playerTwoUsername.equals("Enter Player Name")) {
+        String playerOneName = playerOneField.getText().trim();
+        String playerTwoName = playerTwoField.getText().trim();
+        
+        if (playerOneName.isEmpty() || playerTwoName.isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-                "Both players must have names to enter the realm!", 
+                "Both players must enter names!", 
                 "Names Required", 
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
-
+        
+        // Create PlayerProfile objects
+        PlayerProfile player1 = new PlayerProfile(playerOneName, playerOneName);
+        PlayerProfile player2 = new PlayerProfile(playerTwoName, playerTwoName);
+        
         JOptionPane.showMessageDialog(this, 
-            "The realm welcomes you!\nPlayer I: " + playerOneUsername + "\nPlayer II: " + playerTwoUsername, 
-            "Quest Accepted!", 
+            "Welcome to GuildQuest!\nPlayer 1: " + playerOneName + "\nPlayer 2: " + playerTwoName, 
+            "Adventure Ready!", 
             JOptionPane.INFORMATION_MESSAGE);
         
-        mainGUI.showAdventureMenu();
+        // Pass players to adventure menu
+        mainGUI.showAdventureMenu(player1, player2);
     }
 }

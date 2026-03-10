@@ -39,6 +39,7 @@ public class GMAEGUI extends JFrame {
         try {
             setIconImage(createGameIcon());
         } catch (Exception e) {
+            // Icon not critical
         }
         
         add(mainPanel);
@@ -51,16 +52,10 @@ public class GMAEGUI extends JFrame {
     public void showAdventureMenu() {
         cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
     }
-  
-      public void showAdventureScreen() {
-        JOptionPane.showMessageDialog(this, 
-            "Adventure gameplay coming soon!", 
-            "Into the Dungeon", 
-            JOptionPane.INFORMATION_MESSAGE);
-    }
-  
-      public void launch() {
-        setVisible(true);
+    
+    public void showAdventureMenu(PlayerProfile player1, PlayerProfile player2) {
+        adventureMenuScreen.setPlayers(player1, player2);
+        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
     }
     
     private Image createGameIcon() {
@@ -87,7 +82,7 @@ public class GMAEGUI extends JFrame {
             }
             
             GMAEGUI game = new GMAEGUI();
-            game.launch();
+            game.setVisible(true);
         });
     }
 }
