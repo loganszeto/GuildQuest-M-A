@@ -1,4 +1,4 @@
-package backend;
+package Backend;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -8,19 +8,38 @@ import java.util.ListIterator;
 public class RealmSpace {
 	private List<Tile> tiles; //order matters: higher index means will be drawn on top
 	private String name;
+	private Player player1;
+	private Player player2;
+	private List<Mob> mobs;
 	
 	public RealmSpace() {
 		tiles = new ArrayList<Tile>();
+		player1 = null;
+		player2 = null;
+		mobs = new ArrayList<Mob>();
 		this.name = "Unknown Realm";
 	}
 	
 	public RealmSpace(String name) {
-		tiles = new ArrayList<Tile>();
+		this();
 		this.name = name;
 	}
 	
 	public void addTile(Tile t) {
 		tiles.add(t);
+		
+		//add mobs to list for resolving and detect player 1 and 2
+		if(t instanceof Mob) {
+			mobs.add((Mob) t);
+			if(t instanceof Player) {
+				if(player1!=null) {
+					player2 = (Player) t;
+				}
+				else {
+					player1 = (Player) t;
+				}
+			}
+		}
 	}
 	
 	public Tile getTopAt(Point p) {
@@ -68,5 +87,17 @@ public class RealmSpace {
 	@Override
 	public String toString() {
 		return getName(); // Return realm name for JComboBox display
+	}
+	
+	public Player getPlayerOne() {
+		return player1;
+	}
+	
+	public Player getPlayerTwo() {
+		return player2;
+	}
+	
+	public List<Mob> getMobList(){
+		return mobs;
 	}
 }

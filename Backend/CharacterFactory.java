@@ -1,4 +1,4 @@
-package backend;
+package Backend;
 
 public class CharacterFactory extends FileFactory<Character>{
 

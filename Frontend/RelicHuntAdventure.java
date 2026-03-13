@@ -1,14 +1,15 @@
 package gmae;
 
-import backend.RealmSpace;
-import backend.Tile;
-import backend.Ground;
-import backend.Mob;
-import backend.Player;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+
+import Backend.Ground;
+import Backend.Mob;
+import Backend.Player;
+import Backend.RealmSpace;
+import Backend.Tile;
 
 /**
  * Sample mini-adventure: Relic Hunt
@@ -23,8 +24,8 @@ public class RelicHuntAdventure implements MiniAdventure {
     private boolean gameActive;
     
     // Game entities
-    private backend.Player player1Entity;
-    private backend.Player player2Entity;
+    private Backend.Player player1Entity;
+    private Backend.Player player2Entity;
     private Map<Point, Boolean> relics;
     private Map<Point, Mob> enemies;
     private int currentPlayer;
@@ -46,8 +47,8 @@ public class RelicHuntAdventure implements MiniAdventure {
         // Create Player Entities
         char1 = 'W'; // Warrior symbol
         char2 = 'M'; // Mage symbol
-        player1Entity = new backend.Player(new Point(0, 0), char1);
-        player2Entity = new backend.Player(new Point(19, 14), char2);
+        player1Entity = new Backend.Player(new Point(0, 0), char1);
+        player2Entity = new Backend.Player(new Point(19, 14), char2);
         
         // Add ground tiles (terrain)
         for (int x = 0; x < 20; x++) {

@@ -1,9 +1,11 @@
 package gmae;
 
-import backend.RealmSpace;
-import backend.Tile;
-import backend.TileGroup;
 import javax.swing.*;
+
+import Backend.RealmSpace;
+import Backend.Tile;
+import Backend.TileGroup;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

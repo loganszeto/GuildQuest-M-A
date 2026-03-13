@@ -1,4 +1,4 @@
-package backend;
+package Backend;
 
 public class DefaultPopulator {
 	public static void populate() {

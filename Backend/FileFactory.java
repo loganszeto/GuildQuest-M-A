@@ -1,4 +1,4 @@
-package backend;
+package Backend;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

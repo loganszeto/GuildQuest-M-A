@@ -74,7 +74,7 @@ public interface MiniAdventure {
      * Get the realm/map this adventure takes place in.
      * @return RealmSpace for the adventure
      */
-    backend.RealmSpace getRealm();
+    Backend.RealmSpace getRealm();
     
     /**
      * Check if this adventure supports co-op mode.

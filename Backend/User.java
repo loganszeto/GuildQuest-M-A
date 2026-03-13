@@ -3,7 +3,7 @@ package Backend;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User{
     private String username;
     private String preferredRealm;
     private List<String> achievements;
