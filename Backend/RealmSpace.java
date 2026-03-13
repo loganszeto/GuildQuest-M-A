@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class RealmSpace {
+public class RealmSpace{
 	private List<Tile> tiles; //order matters: higher index means will be drawn on top
 	private String name;
 	private Player player1;
@@ -100,4 +100,5 @@ public class RealmSpace {
 	public List<Mob> getMobList(){
 		return mobs;
 	}
+
 }
