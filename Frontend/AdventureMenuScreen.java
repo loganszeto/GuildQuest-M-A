@@ -1,5 +1,6 @@
 package gmae;
 
+import backend.User;
 import javax.swing.*;
 
 import Backend.RealmSpace;
@@ -29,8 +30,8 @@ public class AdventureMenuScreen extends JPanel {
     private JLabel currentRealmLabel;
     
     // Player profiles
-    private PlayerProfile player1;
-    private PlayerProfile player2;
+    private User player1;
+    private User player2;
     
     // Game manager
     private TwoPlayerGameManager gameManager;
@@ -44,7 +45,7 @@ public class AdventureMenuScreen extends JPanel {
         loadDefaultAdventures();
     }
     
-    public void setPlayers(PlayerProfile player1, PlayerProfile player2) {
+    public void setPlayers(User player1, User player2) {
         this.player1 = player1;
         this.player2 = player2;
         updateButtonStates();
@@ -235,7 +236,7 @@ public class AdventureMenuScreen extends JPanel {
         // Add more sample adventures
         adventureListModel.addElement(new MiniAdventure() {
             @Override
-            public void initialize(PlayerProfile p1, PlayerProfile p2, Map<String, Object> settings) {}
+            public void initialize(backend.User p1, backend.User p2, Map<String, Object> settings) {}
             @Override
             public void start() {}
             @Override

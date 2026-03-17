@@ -2,6 +2,7 @@ package gmae;
 
 import java.awt.Point;
 import java.util.Map;
+import backend.User;
 
 /**
  * Interface that all mini-adventures must implement.
@@ -15,7 +16,7 @@ public interface MiniAdventure {
      * @param player2 Profile of second player  
      * @param settings Adventure-specific configuration
      */
-    void initialize(PlayerProfile player1, PlayerProfile player2, Map<String, Object> settings);
+    void initialize(User player1, User player2, Map<String, Object> settings);
     
     /**
      * Start or restart the adventure.

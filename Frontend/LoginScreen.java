@@ -1,5 +1,6 @@
 package gmae;
 
+import backend.User;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -138,9 +139,11 @@ public class LoginScreen extends JPanel {
             return;
         }
         
-        // Create PlayerProfile objects
-        PlayerProfile player1 = new PlayerProfile(playerOneName, playerOneName);
-        PlayerProfile player2 = new PlayerProfile(playerTwoName, playerTwoName);
+        // Create User objects (player profiles live in backend.User)
+        User player1 = new User(playerOneName, "Mystic Realms");
+        player1.setCharacterName(playerOneName);
+        User player2 = new User(playerTwoName, "Mystic Realms");
+        player2.setCharacterName(playerTwoName);
         
         JOptionPane.showMessageDialog(this, 
             "Welcome to GuildQuest!\nPlayer 1: " + playerOneName + "\nPlayer 2: " + playerTwoName, 

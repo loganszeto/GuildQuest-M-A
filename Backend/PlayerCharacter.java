@@ -1,4 +1,4 @@
-package Backend;
+package backend;
 
 public class PlayerCharacter extends Character {
     public PlayerCharacter(String name, int health) {

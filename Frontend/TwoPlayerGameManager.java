@@ -1,5 +1,6 @@
 package gmae;
 
+import backend.User;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,8 +9,8 @@ import java.util.Map;
  * Handles player profiles, game state, and turn management.
  */
 public class TwoPlayerGameManager {
-    private PlayerProfile player1;
-    private PlayerProfile player2;
+    private User player1;
+    private User player2;
     private MiniAdventure currentAdventure;
     private int currentPlayerTurn;
     private boolean isCompetitive;
@@ -23,7 +24,7 @@ public class TwoPlayerGameManager {
     /**
      * Set up a new two-player game.
      */
-    public boolean setupGame(PlayerProfile p1, PlayerProfile p2, MiniAdventure adventure, boolean competitive) {
+    public boolean setupGame(User p1, User p2, MiniAdventure adventure, boolean competitive) {
         if (p1 == null || p2 == null || adventure == null) {
             return false;
         }
@@ -76,14 +77,14 @@ public class TwoPlayerGameManager {
     /**
      * Get the current player's profile.
      */
-    public PlayerProfile getCurrentPlayer() {
+    public User getCurrentPlayer() {
         return currentPlayerTurn == 1 ? player1 : player2;
     }
     
     /**
      * Get the other player's profile.
      */
-    public PlayerProfile getOtherPlayer() {
+    public User getOtherPlayer() {
         return currentPlayerTurn == 1 ? player2 : player1;
     }
     
@@ -147,14 +148,14 @@ public class TwoPlayerGameManager {
     /**
      * Get player 1 profile.
      */
-    public PlayerProfile getPlayer1() {
+    public User getPlayer1() {
         return player1;
     }
     
     /**
      * Get player 2 profile.
      */
-    public PlayerProfile getPlayer2() {
+    public User getPlayer2() {
         return player2;
     }
     

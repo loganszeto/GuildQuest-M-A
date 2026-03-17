@@ -41,6 +41,10 @@ public class RealmSpace{
 			}
 		}
 	}
+
+	public void clearTiles() {
+		tiles.clear();
+	}
 	
 	public Tile getTopAt(Point p) {
 		ListIterator<Tile> listIterator = tiles.listIterator(tiles.size());

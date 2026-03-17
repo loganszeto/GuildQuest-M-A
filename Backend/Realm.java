@@ -1,116 +1,75 @@
-package Backend;
+package backend;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Realm {
+public class Realm implements Savable {
+    private final RealmSpace realmSpace;
     private String name;
-    private int rows;
-    private int cols;
-    private List<Character> characters;
+    private int width;
+    private int height;
 
-    public Realm(String name, int rows, int cols) {
-        this.name = name;
-        this.rows = rows;
-        this.cols = cols;
-        this.characters = new ArrayList<>();
+    public Realm(String name, int width, int height) {
+        this.name = name == null || name.isBlank() ? "Unknown Realm" : name;
+        this.width = Math.max(1, width);
+        this.height = Math.max(1, height);
+        this.realmSpace = new RealmSpace(this.name);
     }
 
     public String getName() {
         return name;
     }
 
-    public int getRows() {
-        return rows;
+    public int getWidth() {
+        return width;
     }
 
-    public int getCols() {
-        return cols;
+    public int getHeight() {
+        return height;
     }
 
-    public List<Character> getCharacters() {
-        return new ArrayList<>(characters);
+    public RealmSpace getRealmSpace() {
+        return realmSpace;
     }
 
-    public boolean isValidPosition(Position position) {
-        if (position == null) {
-            return false;
+    public boolean inBounds(Point p) {
+        return p != null && p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
+    }
+
+    public void addTile(Tile tile) {
+        if (tile != null) {
+            realmSpace.addTile(tile);
         }
-
-        int row = position.getRow();
-        int col = position.getCol();
-
-        return row >= 0 && row < rows && col >= 0 && col < cols;
     }
 
-    public boolean isOccupied(Position position) {
-        for (Character c : characters) {
-            Position p = c.getPosition();
-            if (p != null &&
-                p.getRow() == position.getRow() &&
-                p.getCol() == position.getCol()) {
-                return true;
-            }
+    public boolean isOccupied(Point p) {
+        if (!inBounds(p)) return true;
+        List<Tile> tiles = realmSpace.getAllAt(p);
+        for (Tile t : tiles) {
+            if (t != null && t.isOccupying()) return true;
         }
         return false;
     }
 
-    public boolean addCharacter(Character character, Position startPos) {
-        if (character == null || !isValidPosition(startPos) || isOccupied(startPos)) {
-            return false;
-        }
+    /**
+     * Movement/placement is handled by Mob + tiles/realmspace (not Character/Position).
+     */
+    public boolean tryMove(Mob mob, int dx, int dy) {
+        if (mob == null) return false;
+        Point from = new Point(mob.getX(), mob.getY());
+        Point to = new Point(from.x + dx, from.y + dy);
+        if (!inBounds(to)) return false;
 
-        characters.add(character);
-        character.setCurrentRealm(this);
-        character.setPosition(startPos);
+        Tile top = realmSpace.getTopAt(to);
+        if (top != null && top.isOccupying() && top != mob) return false;
+
+        mob.move(dx, dy);
         return true;
     }
 
-    public boolean moveCharacter(Character character, Position newPos) {
-        if (character == null || !characters.contains(character)) {
-            return false;
-        }
-
-        if (!isValidPosition(newPos) || isOccupied(newPos)) {
-            return false;
-        }
-
-        character.setPosition(newPos);
-        return true;
-    }
-
-    public boolean removeCharacter(Character character) {
-        if (character == null) {
-            return false;
-        }
-
-        boolean removed = characters.remove(character);
-        if (removed) {
-            character.setCurrentRealm(null);
-            character.setPosition(null);
-        }
-        return removed;
-    }
-
-    public void printRealm() {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                Character found = null;
-                for (Character character : characters) {
-                    Position p = character.getPosition();
-                    if (p != null && p.getRow() == r && p.getCol() == c) {
-                        found = character;
-                        break;
-                    }
-                }
-
-                if (found == null) {
-                    System.out.print(". ");
-                } else {
-                    System.out.print(found.getName().charAt(0) + " ");
-                }
-            }
-            System.out.println();
-        }
+    @Override
+    public String save() {
+        return "Realm{name=" + name + ",width=" + width + ",height=" + height + ",tiles=" + realmSpace.getAllTiles().size() + "}";
     }
 }
