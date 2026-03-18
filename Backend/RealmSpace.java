@@ -1,12 +1,14 @@
 package Backend;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class RealmSpace{
-	private List<Tile> tiles; //order matters: higher index means will be drawn on top
+public class RealmSpace implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private List<Tile> tiles;
 	private String name;
 	private Player player1;
 	private Player player2;

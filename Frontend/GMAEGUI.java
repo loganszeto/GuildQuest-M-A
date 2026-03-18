@@ -1,5 +1,3 @@
-package gmae;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -53,7 +51,7 @@ public class GMAEGUI extends JFrame {
         cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
     }
     
-    public void showAdventureMenu(backend.User player1, backend.User player2) {
+    public void showAdventureMenu(Backend.User player1, Backend.User player2) {
         adventureMenuScreen.setPlayers(player1, player2);
         cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
     }

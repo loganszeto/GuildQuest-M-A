@@ -1,8 +1,6 @@
-package gmae;
-
-import backend.RealmSpace;
-import backend.RelicHuntGame;
-import backend.User;
+import Backend.RealmSpace;
+import Backend.RelicHuntGame;
+import Backend.User;
 import java.util.Map;
 
 /**

@@ -1,5 +1,3 @@
-package gmae;
-
 import javax.swing.*;
 
 import Backend.RealmSpace;

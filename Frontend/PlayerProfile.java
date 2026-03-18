@@ -1,7 +1,6 @@
-package gmae;
-
 import java.util.ArrayList;
 import java.util.List;
+import Backend.RealmSpace;
 
 /**
  * Player profile for GMAE system.

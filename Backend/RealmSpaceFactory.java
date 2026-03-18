@@ -9,7 +9,7 @@ public class RealmSpaceFactory{
 	private static String fileloc = "Backend/MapData/Spaces/";
 	//does not inherit from FileFactory, because RealmSpaces will not user serialization.
 	public RealmSpace load(String f) {
-		File file = new File("fileloc"+f+".txt"); 
+		File file = new File(fileloc+f+".txt"); 
 
         try (Scanner scanner = new Scanner(file)) {
             RealmSpace rs = new RealmSpace(f);

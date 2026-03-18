@@ -1,6 +1,4 @@
-package gmae;
-
-import backend.User;
+import Backend.User;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,8 +1,6 @@
-package gmae;
-
 import java.awt.Point;
 import java.util.Map;
-import backend.User;
+import Backend.User;
 
 /**
  * Interface that all mini-adventures must implement.

@@ -15,7 +15,8 @@ public class Realm implements Savable {
 
     public Realm(String name) {
         this.name = name == null || name.isBlank() ? "Unknown Realm" : name;
-        this.realmSpace = new RealmSpaceFactory().load(this.name);
+        RealmSpace loaded = new RealmSpaceFactory().load(this.name);
+        this.realmSpace = loaded != null ? loaded : new RealmSpace(this.name);
         this.height = this.realmSpace.getHeight();
         this.width = this.realmSpace.getWidth();
     }
