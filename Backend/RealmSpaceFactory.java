@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class RealmSpaceFactory{
-	private static String fileloc = "/Backend/MapData/Spaces/";
+	private static String fileloc = "Backend/MapData/Spaces/";
 	//does not inherit from FileFactory, because RealmSpaces will not user serialization.
 	public RealmSpace load(String f) {
 		File file = new File("fileloc"+f+".txt"); 
@@ -15,7 +15,6 @@ public class RealmSpaceFactory{
             RealmSpace rs = new RealmSpace(f);
             while (scanner.hasNextLine()) {
                 rs.addTile(processLine(scanner));
-                	
             }
             return rs;
         } catch (FileNotFoundException e) {
@@ -38,7 +37,13 @@ public class RealmSpaceFactory{
 			return new TrapTile(new Point(lsc.nextInt(),lsc.nextInt()));
 		case "TileGroup":
 			return new TileGroup<>(new Point(lsc.nextInt(),lsc.nextInt()),
-					new Point(lsc.nextInt(),lsc.nextInt()),processLine(sc));
+					new Point(lsc.nextInt(),lsc.nextInt()),
+					processLine(sc));
+		case "RandomGroup":
+			return new RandomDistTileGroup<>(new Point(lsc.nextInt(),lsc.nextInt()),
+					new Point(lsc.nextInt(),lsc.nextInt()),
+					lsc.nextDouble(),
+					processLine(sc));
 		case "NPC":
 			return new NPC(new Point(lsc.nextInt(),lsc.nextInt()),new NPCCharacter(lsc.next(),lsc.nextInt(),lsc.next()));
 		case "Player":

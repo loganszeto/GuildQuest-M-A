@@ -1,7 +1,7 @@
 package Backend;
 
 public class RealmFactory extends FileFactory<Realm>{
-	private static String fileloc = "/Backend/MapData/";
+	private static String fileloc = "Backend/MapData/";
 	@Override
 	public void save(Realm obj) {
 		write(fileloc + obj.save(), obj);

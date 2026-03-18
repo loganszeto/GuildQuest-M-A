@@ -7,7 +7,7 @@ import java.util.Map;
 public class RandomDistTileGroup<T extends Tile> extends TileGroup<T>{
 	private double prob;
 	private Map<Point, T> gencache;
-	public RandomDistTileGroup(Point p1, Point p2, T repr, double prob) {
+	public RandomDistTileGroup(Point p1, Point p2, double prob,T repr) {
 		super(p1, p2, repr);
 		this.prob = prob;
 		gencache = new HashMap<>();
