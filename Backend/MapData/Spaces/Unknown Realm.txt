@@ -1,0 +1,8 @@
+TileGroup -10 -10 10 10 
+	Ground 0 0
+Relic -5 5
+TileGroup 0 5 1 6
+	Trap 0 0
+NPC 5 5 Default 10 Villager
+Player -1 0
+Player 1 0

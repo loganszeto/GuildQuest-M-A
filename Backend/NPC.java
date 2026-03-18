@@ -8,4 +8,7 @@ public class NPC extends Mob{
 		super(p);
 		this.c = c;
 	}
+	public NPCCharacter getCharacter() {
+		return c;
+	}
 }

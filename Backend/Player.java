@@ -1,15 +1,19 @@
-package backend;
+package Backend;
 
 import java.awt.Point;
 
 public class Player extends Mob{
-	private final char symbol;
-	public Player(Point p, char symbol) {
+	private PlayerCharacter pc;
+	public Player(Point p, PlayerCharacter pc) {
 		super(p);
-		this.symbol = symbol;
+		this.pc = pc;
 	}
 
-	public char getSymbol() {
-		return symbol;
+	public PlayerCharacter getCharacter() {
+		return pc;
+	}
+	
+	public void setPlayerCharacter(PlayerCharacter pc) {
+		this.pc = pc;
 	}
 }

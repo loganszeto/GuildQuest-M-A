@@ -1,7 +1,12 @@
-package backend;
+package Backend;
 
 public class PlayerCharacter extends Character {
-    public PlayerCharacter(String name, int health) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public PlayerCharacter(String name, int health) {
         super(name, health);
     }
 }

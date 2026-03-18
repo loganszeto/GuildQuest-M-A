@@ -1,20 +1,23 @@
-package backend;
+package Backend;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Realm implements Savable {
-    private final RealmSpace realmSpace;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final RealmSpace realmSpace;
     private String name;
     private int width;
     private int height;
 
-    public Realm(String name, int width, int height) {
+    public Realm(String name) {
         this.name = name == null || name.isBlank() ? "Unknown Realm" : name;
-        this.width = Math.max(1, width);
-        this.height = Math.max(1, height);
-        this.realmSpace = new RealmSpace(this.name);
+        this.realmSpace = new RealmSpaceFactory().load(this.name);
+        this.height = this.realmSpace.getHeight();
+        this.width = this.realmSpace.getWidth();
     }
 
     public String getName() {
@@ -70,6 +73,6 @@ public class Realm implements Savable {
 
     @Override
     public String save() {
-        return "Realm{name=" + name + ",width=" + width + ",height=" + height + ",tiles=" + realmSpace.getAllTiles().size() + "}";
+        return name;
     }
 }

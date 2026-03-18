@@ -1,7 +1,11 @@
-package backend;
+package Backend;
 
 public class Character implements Savable {
-    private String name;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String name;
     private int health;
 
     public Character(String name, int health) {
@@ -42,6 +46,6 @@ public class Character implements Savable {
 
     @Override
     public String save() {
-        return toString();
+        return name;
     }
 }

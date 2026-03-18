@@ -1,17 +1,15 @@
 package Backend;
 
 public class UserFactory extends FileFactory<User>{
-
+	private static String fileloc = "/Backend/UserData/";
 	@Override
 	public void save(User obj) {
-		// TODO Auto-generated method stub
-		
+		write(fileloc + obj.save(), obj);	
 	}
 
 	@Override
 	public User load(String f) {
-		// TODO Auto-generated method stub
-		return null;
+		return (User) objfromfile(fileloc+f);
 	}
 
 }

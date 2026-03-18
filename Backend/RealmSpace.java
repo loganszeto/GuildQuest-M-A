@@ -11,6 +11,10 @@ public class RealmSpace{
 	private Player player1;
 	private Player player2;
 	private List<Mob> mobs;
+	private int minx;
+	private int maxx;
+	private int miny;
+	private int maxy;
 	
 	public RealmSpace() {
 		tiles = new ArrayList<Tile>();
@@ -18,11 +22,22 @@ public class RealmSpace{
 		player2 = null;
 		mobs = new ArrayList<Mob>();
 		this.name = "Unknown Realm";
+		minx = 0;
+		maxx = 0;
+		miny = 0;
+		maxy = 0;
 	}
 	
 	public RealmSpace(String name) {
 		this();
 		this.name = name;
+	}
+	
+	private void updateBounds(Point p) {
+		minx = Math.min(p.x, minx);
+        maxx = Math.max(p.x, maxx);
+        miny = Math.min(p.y, miny);
+        maxy = Math.max(p.y, maxy);
 	}
 	
 	public void addTile(Tile t) {
@@ -40,6 +55,7 @@ public class RealmSpace{
 				}
 			}
 		}
+		updateBounds(new Point(t.getX(),t.getY()));
 	}
 
 	public void clearTiles() {
@@ -103,6 +119,14 @@ public class RealmSpace{
 	
 	public List<Mob> getMobList(){
 		return mobs;
+	}
+	
+	public int getHeight() {
+		return maxy - miny;
+	}
+	
+	public int getWidth() {
+		return maxx - minx;
 	}
 
 }

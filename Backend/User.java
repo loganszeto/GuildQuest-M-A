@@ -1,14 +1,19 @@
-package backend;
+package Backend;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Savable {
-    private String username;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String username;
     private String characterName;
     private String preferredRealm;
     private List<String> achievements;
     private List<String> questHistory;
+    private List<String> characters;
     private int wins;
     private int losses;
     private int coOpCompletions;
@@ -112,6 +117,18 @@ public class User implements Savable {
 
     @Override
     public String save() {
-        return toString();
+        return username;
     }
+
+	public List<String> getCharacters() {
+		return characters;
+	}
+
+	public void addCharacterName(String character) {
+		this.characters.add(character);
+	}
+	
+	public Character loadCharacter(String charname) {
+		return new CharacterFactory().load(charname);
+	}
 }
