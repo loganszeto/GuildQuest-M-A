@@ -32,7 +32,7 @@ public class RelicHuntGame {
     private int currentPlayer;
 
     public RelicHuntGame() {
-        this.realm = new RealmSpace("Mystic Realms");
+        this.realm = new RealmSpace("RelicHunt");
         this.relics = new HashMap<>();
         this.enemies = new HashMap<>();
         reset();

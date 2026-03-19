@@ -9,7 +9,9 @@ public class RealmFactory extends FileFactory<Realm>{
 
 	@Override
 	public Realm load(String f) {
-		return (Realm) objfromfile(fileloc+f);
+		Realm r = (Realm) objfromfile(fileloc+f);
+		r.getRealmSpace();
+		return r;
 	}
 
 }

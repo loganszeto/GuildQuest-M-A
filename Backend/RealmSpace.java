@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import Backend.Tiles.Mob;
-import Backend.Tiles.Player;
-import Backend.Tiles.Tile;
+import Backend.Tiles.*;
 
 public class RealmSpace{
 	private List<Tile> tiles;
@@ -58,6 +56,9 @@ public class RealmSpace{
 					player1 = (Player) t;
 				}
 			}
+		}
+		if(t instanceof TileGroup) {
+			updateBounds(((TileGroup) t).getSecondPoint());
 		}
 		updateBounds(new Point(t.getX(),t.getY()));
 	}

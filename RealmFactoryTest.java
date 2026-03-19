@@ -29,7 +29,7 @@ public class RealmFactoryTest {
         // Test 3: Load realm
         System.out.println("\nTest 3: Loading realm...");
         try {
-            Realm loadedRealm = factory.load("Unknown Realm");
+            Realm loadedRealm = factory.load("UnknownRealm");
             if (loadedRealm != null) {
                 System.out.println("✓ Realm loaded successfully");
                 System.out.println("  Name: " + loadedRealm.getName());

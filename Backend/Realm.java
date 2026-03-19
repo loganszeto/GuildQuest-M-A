@@ -11,7 +11,7 @@ public class Realm implements Savable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final RealmSpace realmSpace;
+	private transient RealmSpace realmSpace;
     private String name;
     private int width;
     private int height;
@@ -37,6 +37,9 @@ public class Realm implements Savable {
     }
 
     public RealmSpace getRealmSpace() {
+    		if (realmSpace == null) {
+    			realmSpace = new RealmSpaceFactory().load(this.name);
+    		}
         return realmSpace;
     }
 
