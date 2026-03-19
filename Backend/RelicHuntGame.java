@@ -38,7 +38,8 @@ public class RelicHuntGame extends GameRunner{
 
     public void reset() {
         super.reset();
-        
+        player1Health = MAX_HEALTH;
+        player2Health = MAX_HEALTH;
         relics.clear();
         RealmSpace rs = getRealmSpace();
         for (int i = 0; i < RELIC_COUNT;) {
@@ -191,46 +192,6 @@ public class RelicHuntGame extends GameRunner{
         return state;
     }
 
-
-    public void reset() {
-        gameActive = false;
-        currentPlayer = 1;
-        
-        // Reset health
-        player1Health = MAX_HEALTH;
-        player2Health = MAX_HEALTH;
-
-        realm = new RealmSpaceFactory().load(realm.getName());
-        relics.clear();
-        enemies.clear();
-
-        player1Entity = realm.getPlayerOne();
-        player1Entity.setPlayerCharacter((PlayerCharacter) player1Profile.loadCharacter(player1Profile.getCharacters().get(0)));
-        player2Entity = realm.getPlayerTwo();
-        player2Entity.setPlayerCharacter((PlayerCharacter) player2Profile.loadCharacter(player2Profile.getCharacters().get(0)));
-
-        for (int i = 0; i < RELIC_COUNT; i++) {
-            int x = (int) (Math.random() * MAP_WIDTH);
-            int y = (int) (Math.random() * MAP_HEIGHT);
-            relics.put(new Point(x, y), true);
-        }
-
-        for (int i = 0; i < ENEMY_COUNT; i++) {
-            int x = (int) (Math.random() * (MAP_WIDTH - 2)) + 1;
-            int y = (int) (Math.random() * (MAP_HEIGHT - 2)) + 1;
-            Point enemyPos = new Point(x, y);
-            Mob enemy = new Mob(enemyPos) {
-                @Override
-                public String toString() {
-                    return "Goblin";
-                }
-            };
-            enemies.put(enemyPos, enemy);
-        }
-        for (Mob enemy : enemies.values()) {
-            realm.addTile(enemy);
-        }
-    }
     
     /**
      * Check if the game is lost (player health reached 0)
