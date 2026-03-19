@@ -19,9 +19,18 @@ import Backend.Tiles.Tile;
 public class RelicHuntGame extends GameRunner{
     public static final int RELIC_COUNT = 10;
     public static final int ENEMY_COUNT = 5;
+    public static final int MAX_HEALTH = 3;
+
+    private RealmSpace realm;
     private final Map<Point, Boolean> relics;
     private boolean competitive;
+    private boolean gameActive;
+    private int currentPlayer;
     
+    // Health system for lose conditions
+    private int player1Health;
+    private int player2Health;
+
     public RelicHuntGame() {
         super("RelicHunt");
         this.relics = new HashMap<>();
@@ -97,7 +106,9 @@ public class RelicHuntGame extends GameRunner{
 
         Tile targetTile = rs.getTopAt(newPos);
         if (targetTile instanceof Mob && targetTile != currentEntity) {
-            return false;
+            // Player encountered an enemy - apply damage
+            damagePlayer(playerNum, 1);
+            return false; // Can't move to enemy tile
         }
 
         currentEntity.move(newPos.x - currentPos.x, newPos.y - currentPos.y);
@@ -163,7 +174,13 @@ public class RelicHuntGame extends GameRunner{
         state.put("player1Pos", rs.getPlayerOne());
         state.put("player2Pos", rs.getPlayerTwo());
         state.put("relics", new HashMap<>(relics));
+
         state.put("enemies", rs.getMobList());
+        
+        // Add health information
+        state.put("player1Health", player1Health);
+        state.put("player2Health", player2Health);
+        state.put("maxHealth", MAX_HEALTH);
 
         int collectedRelics = 0;
         for (Boolean collected : relics.values()) {
@@ -174,6 +191,74 @@ public class RelicHuntGame extends GameRunner{
         return state;
     }
 
+
+    public void reset() {
+        gameActive = false;
+        currentPlayer = 1;
+        
+        // Reset health
+        player1Health = MAX_HEALTH;
+        player2Health = MAX_HEALTH;
+
+        realm = new RealmSpaceFactory().load(realm.getName());
+        relics.clear();
+        enemies.clear();
+
+        player1Entity = realm.getPlayerOne();
+        player1Entity.setPlayerCharacter((PlayerCharacter) player1Profile.loadCharacter(player1Profile.getCharacters().get(0)));
+        player2Entity = realm.getPlayerTwo();
+        player2Entity.setPlayerCharacter((PlayerCharacter) player2Profile.loadCharacter(player2Profile.getCharacters().get(0)));
+
+        for (int i = 0; i < RELIC_COUNT; i++) {
+            int x = (int) (Math.random() * MAP_WIDTH);
+            int y = (int) (Math.random() * MAP_HEIGHT);
+            relics.put(new Point(x, y), true);
+        }
+
+        for (int i = 0; i < ENEMY_COUNT; i++) {
+            int x = (int) (Math.random() * (MAP_WIDTH - 2)) + 1;
+            int y = (int) (Math.random() * (MAP_HEIGHT - 2)) + 1;
+            Point enemyPos = new Point(x, y);
+            Mob enemy = new Mob(enemyPos) {
+                @Override
+                public String toString() {
+                    return "Goblin";
+                }
+            };
+            enemies.put(enemyPos, enemy);
+        }
+        for (Mob enemy : enemies.values()) {
+            realm.addTile(enemy);
+        }
+    }
     
+    /**
+     * Check if the game is lost (player health reached 0)
+     * @return -1 if game ongoing, 1 if player 1 lost, 2 if player 2 lost
+     */
+    public int isLost() {
+        if (player1Health <= 0) return 1;
+        if (player2Health <= 0) return 2;
+        return -1; // Game ongoing
+    }
+    
+    /**
+     * Apply damage to a player
+     */
+    public void damagePlayer(int playerNum, int damage) {
+        if (playerNum == 1) {
+            player1Health = Math.max(0, player1Health - damage);
+        } else if (playerNum == 2) {
+            player2Health = Math.max(0, player2Health - damage);
+        }
+    }
+    
+    /**
+     * Get player health
+     */
+    public int getPlayerHealth(int playerNum) {
+        return playerNum == 1 ? player1Health : player2Health;
+    }
+
 }
 

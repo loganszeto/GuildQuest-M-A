@@ -25,10 +25,14 @@ public class User implements Savable {
         this.preferredRealm = preferredRealm;
         this.achievements = new ArrayList<>();
         this.questHistory = new ArrayList<>();
+        this.characters = new ArrayList<>();
         this.wins = 0;
         this.losses = 0;
         this.coOpCompletions = 0;
         this.activeCharacter = null;
+        
+        // Add default character
+        addCharacterName(username);
     }
 
     public String getUsername() {
