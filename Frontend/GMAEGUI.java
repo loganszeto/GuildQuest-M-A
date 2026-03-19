@@ -6,14 +6,14 @@ import java.awt.image.BufferedImage;
 
 public class GMAEGUI extends JFrame {
     private LoginScreen loginScreen;
-    private SimpleAdventureMenuScreen adventureMenuScreen;
-    private TestGameScreen gameScreen;
+    private AdventureMenuScreen adventureMenuScreen;
+    private RelicHuntGameScreen relicHuntGameScreen;
     private JPanel mainPanel;
     private CardLayout cardLayout;
     
     public static final String LOGIN_CARD = "LOGIN";
     public static final String ADVENTURE_MENU_CARD = "ADVENTURE_MENU";
-    public static final String GAME_SCREEN_CARD = "GAME_SCREEN";
+    public static final String RELIC_HUNT_CARD = "RELIC_HUNT";
     
     public GMAEGUI() {
         initializeComponents();
@@ -26,12 +26,12 @@ public class GMAEGUI extends JFrame {
         mainPanel = new JPanel(cardLayout);
         
         loginScreen = new LoginScreen(this);
-        adventureMenuScreen = new SimpleAdventureMenuScreen(this);
-        gameScreen = new TestGameScreen(this);
+        adventureMenuScreen = new AdventureMenuScreen(this);
+        relicHuntGameScreen = new RelicHuntGameScreen(this);
         
         mainPanel.add(loginScreen, LOGIN_CARD);
         mainPanel.add(adventureMenuScreen, ADVENTURE_MENU_CARD);
-        mainPanel.add(gameScreen, GAME_SCREEN_CARD);
+        mainPanel.add(relicHuntGameScreen, RELIC_HUNT_CARD);
     }
     
     private void setupFrame() {
@@ -43,7 +43,7 @@ public class GMAEGUI extends JFrame {
         try {
             setIconImage(createGameIcon());
         } catch (Exception e) {
-            // Icon not critical
+
         }
         
         add(mainPanel);
@@ -63,8 +63,20 @@ public class GMAEGUI extends JFrame {
     }
     
     public void showGameScreen(MiniAdventure adventure, Backend.User player1, Backend.User player2, boolean competitive) {
-        gameScreen.startAdventure(adventure, player1, player2, competitive);
-        cardLayout.show(mainPanel, GAME_SCREEN_CARD);
+        // Check if this is a RelicHuntAdventure and use the appropriate screen
+        if (adventure instanceof RelicHuntAdventure) {
+            RelicHuntAdventure relicHuntAdventure = (RelicHuntAdventure) adventure;
+            relicHuntGameScreen.startAdventure(relicHuntAdventure.game, player1, player2, competitive);
+            cardLayout.show(mainPanel, RELIC_HUNT_CARD);
+        } else {
+            // For other adventures, show a message
+            JOptionPane.showMessageDialog(this, 
+                "Starting adventure: " + adventure.getName() + "\n" +
+                "Mode: " + (competitive ? "Competitive" : "Co-op") + "\n" +
+                "This would launch the appropriate game screen.",
+                "Adventure Starting", 
+                JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     private Image createGameIcon() {

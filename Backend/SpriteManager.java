@@ -159,6 +159,25 @@ public class SpriteManager {
         return getDefaultSprite();
     }
     
+    /**
+     * Get a scaled sprite from a specific index on the spritesheet
+     */
+    public BufferedImage getScaledSpriteFromIndex(int index, int targetSize) {
+        BufferedImage original = getScaledSpriteFromIndex(index);
+        if (original == null) {
+            return null;
+        }
+        
+        BufferedImage scaled = new BufferedImage(targetSize, targetSize, BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g2d = scaled.createGraphics();
+        g2d.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, 
+                           java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(original, 0, 0, targetSize, targetSize, null);
+        g2d.dispose();
+        
+        return scaled;
+    }
+    
     private BufferedImage getDefaultSprite() {
         // Return the last sprite as default, or create one if needed
         BufferedImage defaultSprite = tileSprites.get(Object.class);

@@ -1,16 +1,14 @@
 package Frontend;
-import Backend.User;
+
 import javax.swing.*;
-
-import Backend.RealmSpace;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import Backend.User;
+import Backend.RealmSpace;
 
 public class AdventureMenuScreen extends JPanel {
     private GMAEGUI mainGUI;
