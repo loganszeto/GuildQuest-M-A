@@ -4,8 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class GMAEGUI extends JFrame {
-    private LoginScreen loginScreen;
+/**
+ * Simple test version of GMAEGUI that doesn't depend on problematic backend files
+ */
+public class TestGMAEGUI extends JFrame {
+    private TestLoginScreen loginScreen;
     private SimpleAdventureMenuScreen adventureMenuScreen;
     private TestGameScreen gameScreen;
     private JPanel mainPanel;
@@ -15,7 +18,7 @@ public class GMAEGUI extends JFrame {
     public static final String ADVENTURE_MENU_CARD = "ADVENTURE_MENU";
     public static final String GAME_SCREEN_CARD = "GAME_SCREEN";
     
-    public GMAEGUI() {
+    public TestGMAEGUI() {
         initializeComponents();
         setupFrame();
         showLoginScreen();
@@ -25,7 +28,7 @@ public class GMAEGUI extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         
-        loginScreen = new LoginScreen(this);
+        loginScreen = new TestLoginScreen(this);
         adventureMenuScreen = new SimpleAdventureMenuScreen(this);
         gameScreen = new TestGameScreen(this);
         
@@ -35,7 +38,7 @@ public class GMAEGUI extends JFrame {
     }
     
     private void setupFrame() {
-        setTitle("GuildQuest - Mini Adventure Environment");
+        setTitle("GuildQuest - Test Adventure Environment");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
@@ -43,28 +46,11 @@ public class GMAEGUI extends JFrame {
         try {
             setIconImage(createGameIcon());
         } catch (Exception e) {
-            // Icon not critical
+            // Icon creation failed, continue without icon
         }
         
         add(mainPanel);
-    }
-    
-    public void showLoginScreen() {
-        cardLayout.show(mainPanel, LOGIN_CARD);
-    }
-    
-    public void showAdventureMenu() {
-        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
-    }
-    
-    public void showAdventureMenu(Backend.User player1, Backend.User player2) {
-        adventureMenuScreen.setPlayers(player1, player2);
-        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
-    }
-    
-    public void showGameScreen(MiniAdventure adventure, Backend.User player1, Backend.User player2, boolean competitive) {
-        gameScreen.startAdventure(adventure, player1, player2, competitive);
-        cardLayout.show(mainPanel, GAME_SCREEN_CARD);
+        setVisible(true);
     }
     
     private Image createGameIcon() {
@@ -78,20 +64,37 @@ public class GMAEGUI extends JFrame {
         g2d.fillRect(12, 20, 8, 4);
         g2d.fillRect(14, 24, 4, 6);
         
+        g2d.setColor(new Color(200, 50, 50));
+        g2d.fillOval(10, 8, 12, 12);
+        
+        g2d.setColor(new Color(50, 50, 200));
+        g2d.fillOval(22, 8, 12, 12);
+        
         g2d.dispose();
         return icon;
     }
     
+    public void showLoginScreen() {
+        cardLayout.show(mainPanel, LOGIN_CARD);
+    }
+    
+    public void showTestAdventureMenu(TestUser player1, TestUser player2) {
+        adventureMenuScreen.setPlayers(player1, player2);
+        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
+    }
+    
+    public void showGameScreen(MiniAdventure adventure, TestUser player1, TestUser player2, boolean competitive) {
+        gameScreen.startAdventure(adventure, player1, player2, competitive);
+        cardLayout.show(mainPanel, GAME_SCREEN_CARD);
+    }
+    
+    public void showAdventureMenu() {
+        cardLayout.show(mainPanel, ADVENTURE_MENU_CARD);
+    }
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            GMAEGUI game = new GMAEGUI();
-            game.setVisible(true);
+            new TestGMAEGUI();
         });
     }
 }

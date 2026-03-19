@@ -17,6 +17,7 @@ public class RelicHuntGame {
     public static final int MAP_HEIGHT = 15;
     public static final int RELIC_COUNT = 10;
     public static final int ENEMY_COUNT = 5;
+    public static final int MAX_HEALTH = 3;
 
     private RealmSpace realm;
     private final Map<Point, Boolean> relics;
@@ -30,6 +31,10 @@ public class RelicHuntGame {
     private boolean competitive;
     private boolean gameActive;
     private int currentPlayer;
+    
+    // Health system for lose conditions
+    private int player1Health;
+    private int player2Health;
 
     public RelicHuntGame() {
         this.realm = new RealmSpace("RelicHunt");
@@ -84,7 +89,9 @@ public class RelicHuntGame {
 
         Tile targetTile = realm.getTopAt(newPos);
         if (targetTile instanceof Mob && targetTile != currentEntity) {
-            return false;
+            // Player encountered an enemy - apply damage
+            damagePlayer(playerNum, 1);
+            return false; // Can't move to enemy tile
         }
 
         currentEntity.move(newPos.x - currentPos.x, newPos.y - currentPos.y);
@@ -132,6 +139,11 @@ public class RelicHuntGame {
         state.put("player2Pos", player2Entity == null ? null : new Point(player2Entity.getX(), player2Entity.getY()));
         state.put("relics", new HashMap<>(relics));
         state.put("enemies", new HashMap<>(enemies));
+        
+        // Add health information
+        state.put("player1Health", player1Health);
+        state.put("player2Health", player2Health);
+        state.put("maxHealth", MAX_HEALTH);
 
         int collectedRelics = 0;
         for (Boolean collected : relics.values()) {
@@ -145,6 +157,10 @@ public class RelicHuntGame {
     public void reset() {
         gameActive = false;
         currentPlayer = 1;
+        
+        // Reset health
+        player1Health = MAX_HEALTH;
+        player2Health = MAX_HEALTH;
 
         realm = new RealmSpaceFactory().load(realm.getName());
         relics.clear();
@@ -176,6 +192,34 @@ public class RelicHuntGame {
         for (Mob enemy : enemies.values()) {
             realm.addTile(enemy);
         }
+    }
+    
+    /**
+     * Check if the game is lost (player health reached 0)
+     * @return -1 if game ongoing, 1 if player 1 lost, 2 if player 2 lost
+     */
+    public int isLost() {
+        if (player1Health <= 0) return 1;
+        if (player2Health <= 0) return 2;
+        return -1; // Game ongoing
+    }
+    
+    /**
+     * Apply damage to a player
+     */
+    public void damagePlayer(int playerNum, int damage) {
+        if (playerNum == 1) {
+            player1Health = Math.max(0, player1Health - damage);
+        } else if (playerNum == 2) {
+            player2Health = Math.max(0, player2Health - damage);
+        }
+    }
+    
+    /**
+     * Get player health
+     */
+    public int getPlayerHealth(int playerNum) {
+        return playerNum == 1 ? player1Health : player2Health;
     }
 }
 

@@ -326,60 +326,9 @@ public class AdventureMenuScreen extends JPanel {
         boolean success = gameManager.setupGame(player1, player2, selectedAdventure, isCompetitive);
         
         if (success) {
-            String message = "Starting " + selectedAdventure.getName() + "!\n\n" + 
-                selectedAdventure.getDescription() + "\n\n" +
-                "Mode: " + (isCompetitive ? "Competitive" : "Co-op") + "\n" +
-                "Player 1: " + player1.getCharacterName() + "\n" +
-                "Player 2: " + player2.getCharacterName();
-            
-            JOptionPane.showMessageDialog(this, message, 
-                "Adventure Starting!", JOptionPane.INFORMATION_MESSAGE);
-            
-            // For now, just show a simple game screen
-            showAdventureGameScreen(selectedAdventure);
+            // Start the game using the new GameScreen
+            mainGUI.showGameScreen(selectedAdventure, player1, player2, isCompetitive);
         }
-    }
-    
-    private void showAdventureGameScreen(MiniAdventure adventure) {
-        // Create a simple game screen
-        JFrame gameFrame = new JFrame(adventure.getName());
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        gameFrame.setSize(800, 600);
-        gameFrame.setLocationRelativeTo(this);
-        
-        JPanel gamePanel = new JPanel(new BorderLayout());
-        gamePanel.setBackground(new Color(25, 25, 60));
-        
-        // Game info
-        JLabel infoLabel = new JLabel("<html><div style='color: gold; font-family: Arial; font-size: 14px;'>" +
-            "Adventure: " + adventure.getName() + "<br>" +
-            "Mode: " + (gameManager.isCompetitive() ? "Competitive" : "Co-op") + "<br>" +
-            "Current Turn: Player " + gameManager.getCurrentPlayerTurn() + "<br>" +
-            "Use WASD or Arrow Keys to move<br>" +
-            "Close this window to return to menu</div></html>");
-        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        gamePanel.add(infoLabel, BorderLayout.NORTH);
-        
-        // Add realm map
-        RealmMapPanel mapPanel = new RealmMapPanel(adventure.getRealm());
-        gamePanel.add(mapPanel, BorderLayout.CENTER);
-        
-        // Control buttons
-        JPanel controlPanel = new JPanel();
-        controlPanel.setBackground(new Color(25, 25, 60));
-        
-        JButton resetButton = new JButton("Reset Adventure");
-        resetButton.addActionListener(e -> {
-            gameManager.resetGame();
-            JOptionPane.showMessageDialog(gameFrame, "Adventure reset!");
-        });
-        
-        controlPanel.add(resetButton);
-        gamePanel.add(controlPanel, BorderLayout.SOUTH);
-        
-        gameFrame.add(gamePanel);
-        gameFrame.setVisible(true);
     }
     
     private void handleDeleteAdventure() {

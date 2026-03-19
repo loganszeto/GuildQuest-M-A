@@ -11,7 +11,7 @@ import java.util.Map;
  * Delegates game rules/state to backend.RelicHuntGame.
  */
 public class RelicHuntAdventure implements MiniAdventure {
-    private final RelicHuntGame game;
+    public final RelicHuntGame game;
     
     public RelicHuntAdventure() {
         this.game = new RelicHuntGame();
