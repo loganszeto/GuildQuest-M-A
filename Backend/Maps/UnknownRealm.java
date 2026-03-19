@@ -19,7 +19,7 @@ public class UnknownRealm {
 		ret.addTile(new TileGroup<>(p(-10,-10),
 				p(10,10),
 				new Ground(defaultp)));
-		ret.addTile(new RelicTile(p(-5,5)));
+		ret.addTile(new RelicTile(p(4,5)));
 		ret.addTile(new TileGroup<>(p(0,5),
 				p(1,6),
 				new TrapTile(defaultp)));
