@@ -1,6 +1,4 @@
-package Backend.Tiles;
-
-import Backend.Character;
+package Backend;
 
 public class NPCCharacter extends Character {
     /**

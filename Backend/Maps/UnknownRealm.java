@@ -2,6 +2,7 @@ package Backend.Maps;
 
 import java.awt.Point;
 
+import Backend.NPCCharacter;
 import Backend.RealmSpace;
 import Backend.Tiles.*;
 

@@ -15,8 +15,8 @@ public class RelicHunt {
 		//for TileGroups's representatives
 		Point defaultp = p(0,0);
 		//the Map itself
-		ret.addTile(new RandomDistTileGroup<>(p(-10,-10),
-				p(10,10),
+		ret.addTile(new RandomDistTileGroup<>(p(0,0),
+				p(30,30),
 				0.8,
 				new Ground(defaultp)));
 		ret.addTile(new Player(p(1,1),null));

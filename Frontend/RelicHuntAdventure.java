@@ -38,10 +38,6 @@ public class RelicHuntAdventure implements MiniAdventure {
         game.advanceTurn();
     }
     
-    @Override
-    public Map<String, Object> getCurrentState() {
-        return game.getCurrentState();
-    }
     
     @Override
     public boolean isComplete() {
@@ -75,7 +71,7 @@ public class RelicHuntAdventure implements MiniAdventure {
     
     @Override
     public RealmSpace getRealm() {
-        return game.getRealm();
+        return game.getRealmSpace();
     }
     
     @Override

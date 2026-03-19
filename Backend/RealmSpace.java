@@ -133,5 +133,12 @@ public class RealmSpace{
 	public int getWidth() {
 		return maxx - minx;
 	}
+	
+	public boolean removeTile(Tile t) {
+		if(t instanceof Mob) {
+			mobs.remove(t);
+		}
+		return tiles.remove(t);
+	}
 
 }
