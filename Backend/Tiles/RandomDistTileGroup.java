@@ -1,4 +1,4 @@
-package Backend;
+package Backend.Tiles;
 
 import java.awt.Point;
 import java.util.HashMap;

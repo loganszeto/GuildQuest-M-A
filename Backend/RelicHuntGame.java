@@ -4,6 +4,10 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
+import Backend.Tiles.Mob;
+import Backend.Tiles.Player;
+import Backend.Tiles.Tile;
+
 /**
  * Backend game-state + rules for the "Relic Hunt" mini-adventure.
  * UI/adventure adapters (e.g. in package gmae) should delegate to this class.
@@ -14,7 +18,7 @@ public class RelicHuntGame {
     public static final int RELIC_COUNT = 10;
     public static final int ENEMY_COUNT = 5;
 
-    private final RealmSpace realm;
+    private RealmSpace realm;
     private final Map<Point, Boolean> relics;
     private final Map<Point, Mob> enemies;
 
@@ -142,20 +146,14 @@ public class RelicHuntGame {
         gameActive = false;
         currentPlayer = 1;
 
-        realm.clearTiles();
+        realm = new RealmSpaceFactory().load(realm.getName());
         relics.clear();
         enemies.clear();
 
-        player1Entity = new Player(new Point(0, 0), 'W');
-        player2Entity = new Player(new Point(MAP_WIDTH - 1, MAP_HEIGHT - 1), 'M');
-
-        for (int x = 0; x < MAP_WIDTH; x++) {
-            for (int y = 0; y < MAP_HEIGHT; y++) {
-                if (Math.random() < 0.7) {
-                    realm.addTile(new Ground(new Point(x, y)));
-                }
-            }
-        }
+        player1Entity = realm.getPlayerOne();
+        player1Entity.setPlayerCharacter((PlayerCharacter) player1Profile.loadCharacter(player1Profile.getCharacters().get(0)));
+        player2Entity = realm.getPlayerTwo();
+        player2Entity.setPlayerCharacter((PlayerCharacter) player2Profile.loadCharacter(player2Profile.getCharacters().get(0)));
 
         for (int i = 0; i < RELIC_COUNT; i++) {
             int x = (int) (Math.random() * MAP_WIDTH);
@@ -175,9 +173,6 @@ public class RelicHuntGame {
             };
             enemies.put(enemyPos, enemy);
         }
-
-        realm.addTile(player1Entity);
-        realm.addTile(player2Entity);
         for (Mob enemy : enemies.values()) {
             realm.addTile(enemy);
         }

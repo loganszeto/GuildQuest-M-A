@@ -1,3 +1,4 @@
+package Frontend;
 import Backend.User;
 import javax.swing.*;
 
@@ -234,7 +235,7 @@ public class AdventureMenuScreen extends JPanel {
         // Add more sample adventures
         adventureListModel.addElement(new MiniAdventure() {
             @Override
-            public void initialize(backend.User p1, backend.User p2, Map<String, Object> settings) {}
+            public void initialize(Backend.User p1, Backend.User p2, Map<String, Object> settings) {}
             @Override
             public void start() {}
             @Override

@@ -1,3 +1,5 @@
+package Frontend;
+
 import java.awt.Point;
 import java.util.Map;
 import Backend.User;

@@ -3,6 +3,9 @@ package Backend;
 import java.awt.Point;
 import java.util.List;
 
+import Backend.Tiles.Mob;
+import Backend.Tiles.Tile;
+
 public class Realm implements Savable {
     /**
 	 * 
@@ -14,7 +17,7 @@ public class Realm implements Savable {
     private int height;
 
     public Realm(String name) {
-        this.name = name == null || name.isBlank() ? "Unknown Realm" : name;
+        this.name = name == null || name.isBlank() ? "UnknownRealm" : name;
         RealmSpace loaded = new RealmSpaceFactory().load(this.name);
         this.realmSpace = loaded != null ? loaded : new RealmSpace(this.name);
         this.height = this.realmSpace.getHeight();

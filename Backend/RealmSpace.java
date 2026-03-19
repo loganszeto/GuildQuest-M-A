@@ -1,13 +1,15 @@
 package Backend;
 
 import java.awt.Point;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public class RealmSpace implements Serializable {
-	private static final long serialVersionUID = 1L;
+import Backend.Tiles.Mob;
+import Backend.Tiles.Player;
+import Backend.Tiles.Tile;
+
+public class RealmSpace{
 	private List<Tile> tiles;
 	private String name;
 	private Player player1;

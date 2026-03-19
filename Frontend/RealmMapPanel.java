@@ -1,8 +1,10 @@
+package Frontend;
+
 import javax.swing.*;
 
 import Backend.RealmSpace;
-import Backend.Tile;
-import Backend.TileGroup;
+import Backend.Tiles.Tile;
+import Backend.Tiles.TileGroup;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

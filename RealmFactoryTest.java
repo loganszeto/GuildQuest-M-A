@@ -1,3 +1,5 @@
+import java.io.File;
+
 import Backend.Realm;
 import Backend.RealmFactory;
 
@@ -7,7 +9,7 @@ public class RealmFactoryTest {
         
         // Test 1: Create a realm
         System.out.println("Test 1: Creating realm...");
-        Realm testRealm = new Realm("TestDungeon");
+        Realm testRealm = new Realm(null);
         System.out.println("✓ Created realm: " + testRealm.getName());
         System.out.println("  Width: " + testRealm.getWidth());
         System.out.println("  Height: " + testRealm.getHeight());
@@ -27,7 +29,7 @@ public class RealmFactoryTest {
         // Test 3: Load realm
         System.out.println("\nTest 3: Loading realm...");
         try {
-            Realm loadedRealm = factory.load("TestDungeon");
+            Realm loadedRealm = factory.load("Unknown Realm");
             if (loadedRealm != null) {
                 System.out.println("✓ Realm loaded successfully");
                 System.out.println("  Name: " + loadedRealm.getName());
