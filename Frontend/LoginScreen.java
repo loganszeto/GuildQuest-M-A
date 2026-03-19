@@ -1,8 +1,6 @@
 package Frontend;
 
 import Backend.User;
-import Backend.Realm;
-import Backend.RealmFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,7 +11,6 @@ public class LoginScreen extends JPanel {
     private JTextField playerOneField;
     private JTextField playerTwoField;
     private JButton submitButton;
-    private JButton testRealmButton;
     
     public LoginScreen(GMAEGUI mainGUI) {
         this.mainGUI = mainGUI;
@@ -26,7 +23,6 @@ public class LoginScreen extends JPanel {
         playerOneField = new JTextField(15);
         playerTwoField = new JTextField(15);
         submitButton = new JButton("Begin Quest");
-        testRealmButton = new JButton("Test Realm");
         
         // Match AdventureMenuScreen field styling
         playerOneField.setBackground(new Color(60, 60, 100));
@@ -49,15 +45,6 @@ public class LoginScreen extends JPanel {
         submitButton.setPreferredSize(new Dimension(200, 35));
         submitButton.setFocusPainted(false);
         submitButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Test Realm button styling
-        testRealmButton.setBackground(new Color(50, 150, 50));
-        testRealmButton.setForeground(Color.WHITE);
-        testRealmButton.setFont(new Font("Old English Text MT", Font.BOLD, 14));
-        testRealmButton.setBorder(BorderFactory.createLineBorder(new Color(100, 200, 100), 2));
-        testRealmButton.setPreferredSize(new Dimension(200, 35));
-        testRealmButton.setFocusPainted(false);
-        testRealmButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
     
     private void setupLayout() {
@@ -121,7 +108,6 @@ public class LoginScreen extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.setOpaque(false);
         buttonPanel.add(submitButton);
-        buttonPanel.add(testRealmButton);
         
         gbc.gridx = 0;
         gbc.gridy = 3;
@@ -138,13 +124,6 @@ public class LoginScreen extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSubmit();
-            }
-        });
-        
-        testRealmButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleTestRealm();
             }
         });
     }
@@ -174,39 +153,5 @@ public class LoginScreen extends JPanel {
         
         // Pass players to adventure menu
         mainGUI.showAdventureMenu(player1, player2);
-    }
-    
-    private void handleTestRealm() {
-        try {
-            // Test Realm creation
-            Realm testRealm = new Realm("Test Realm");
-            
-            // Test RealmFactory
-            RealmFactory factory = new RealmFactory();
-            factory.save(testRealm);
-            Realm loadedRealm = factory.load("Test Realm");
-            
-            String realmInfo = "Realm Test Results:\n" +
-                "\n=== Original Realm ===\n" +
-                "Name: " + testRealm.getName() + "\n" +
-                "Width: " + testRealm.getWidth() + "\n" +
-                "Height: " + testRealm.getHeight() + "\n" +
-                "RealmSpace: " + (testRealm.getRealmSpace() != null ? "Loaded" : "Not Loaded") +
-                "\n=== RealmFactory Test ===\n" +
-                "Save: Success\n" +
-                "Load: " + (loadedRealm != null ? "Success" : "Failed") +
-                (loadedRealm != null ? "\nLoaded Name: " + loadedRealm.getName() : "");
-            
-            JOptionPane.showMessageDialog(this, 
-                realmInfo, 
-                "Realm Test Result", 
-                JOptionPane.INFORMATION_MESSAGE);
-                
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error testing Realm: " + e.getMessage(), 
-                "Realm Test Error", 
-                JOptionPane.ERROR_MESSAGE);
-        }
     }
 }

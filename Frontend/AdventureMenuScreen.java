@@ -9,13 +9,13 @@ import java.util.Map;
 
 import Backend.User;
 import Backend.RealmSpace;
+import Backend.RelicHuntGameBackend;
 
 public class AdventureMenuScreen extends JPanel {
     private GMAEGUI mainGUI;
     private JButton addQuestButton;
     private JButton backButton;
     private JButton startAdventureButton;
-    private JButton viewMapButton;
     private JLabel titleLabel;
     private JList<MiniAdventure> adventureList;
     private DefaultListModel<MiniAdventure> adventureListModel;
@@ -52,7 +52,6 @@ public class AdventureMenuScreen extends JPanel {
         addQuestButton = new JButton("Add Adventure");
         backButton = new JButton("Retreat");
         startAdventureButton = new JButton("Begin Selected Adventure");
-        viewMapButton = new JButton("View Map");
         titleLabel = new JLabel("Mini-Adventure Menu");
         deleteAdventureButton = new JButton("Delete Adventure");
         
@@ -86,7 +85,6 @@ public class AdventureMenuScreen extends JPanel {
         styleButton(addQuestButton);
         styleButton(backButton);
         styleButton(startAdventureButton);
-        styleButton(viewMapButton);
         styleButton(deleteAdventureButton);
         
         loadRealms();
@@ -145,7 +143,6 @@ public class AdventureMenuScreen extends JPanel {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         controlPanel.setBackground(new Color(45, 45, 80));
         controlPanel.add(addQuestButton);
-        controlPanel.add(viewMapButton);
         
         centerPanel.add(questPanel, BorderLayout.CENTER);
         centerPanel.add(controlPanel, BorderLayout.NORTH);
@@ -200,13 +197,6 @@ public class AdventureMenuScreen extends JPanel {
             }
         });
         
-        viewMapButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleViewMap();
-            }
-        });
-        
         adventureList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 updateButtonStates();
@@ -228,7 +218,7 @@ public class AdventureMenuScreen extends JPanel {
             defaultRealm = selectedRealm;
         }
         
-        adventureListModel.addElement(new RelicHuntAdventure());
+        adventureListModel.addElement(new RelicHuntGameBackend());
         
         // Add more sample adventures
         adventureListModel.addElement(new MiniAdventure() {
@@ -373,28 +363,5 @@ public class AdventureMenuScreen extends JPanel {
     
     private void handleRetreat() {
         mainGUI.showLoginScreen();
-    }
-    
-    private void handleViewMap() {
-        RealmSpace currentRealm = (RealmSpace) realmSelector.getSelectedItem();
-        if (currentRealm == null) {
-            currentRealm = new RealmSpace("Mystic Realms");
-        }
-        
-        RealmMapPanel mapPanel = new RealmMapPanel(currentRealm);
-        JScrollPane scrollPane = new JScrollPane(mapPanel);
-        
-        JFrame mapFrame = new JFrame("Realm Map: " + currentRealm.getName());
-        mapFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mapFrame.setSize(800, 600);
-        mapFrame.setLocationRelativeTo(this);
-        
-        JLabel infoLabel = new JLabel("Click tiles to inspect them");
-        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        
-        mapFrame.add(infoLabel, BorderLayout.NORTH);
-        mapFrame.add(scrollPane, BorderLayout.CENTER);
-        
-        mapFrame.setVisible(true);
     }
 }

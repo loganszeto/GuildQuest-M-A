@@ -3,6 +3,7 @@ package Frontend;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import Backend.RelicHuntGameBackend;
 
 public class GMAEGUI extends JFrame {
     private LoginScreen loginScreen;
@@ -63,10 +64,10 @@ public class GMAEGUI extends JFrame {
     }
     
     public void showGameScreen(MiniAdventure adventure, Backend.User player1, Backend.User player2, boolean competitive) {
-        // Check if this is a RelicHuntAdventure and use the appropriate screen
-        if (adventure instanceof RelicHuntAdventure) {
-            RelicHuntAdventure relicHuntAdventure = (RelicHuntAdventure) adventure;
-            relicHuntGameScreen.startAdventure(relicHuntAdventure.game, player1, player2, competitive);
+        // Check if this is a RelicHuntGameBackend and use the appropriate screen
+        if (adventure instanceof RelicHuntGameBackend) {
+            RelicHuntGameBackend relicHuntBackend = (RelicHuntGameBackend) adventure;
+            relicHuntGameScreen.startAdventure(relicHuntBackend, player1, player2, competitive);
             cardLayout.show(mainPanel, RELIC_HUNT_CARD);
         } else {
             // For other adventures, show a message

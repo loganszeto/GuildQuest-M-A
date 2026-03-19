@@ -12,12 +12,14 @@ import Backend.Tiles.Ground;
 import Backend.Tiles.Player;
 import Backend.Tiles.RelicTile;
 import Backend.Tiles.Tile;
+import Frontend.MiniAdventure;
 
 /**
  * Standalone backend for Relic Hunt game that doesn't depend on GameRunner
  * Contains all game logic and can be used with any UI implementation
+ * Also implements MiniAdventure interface for direct integration
  */
-public class RelicHuntGameBackend {
+public class RelicHuntGameBackend implements MiniAdventure {
     public static final int RELIC_COUNT = 5;
     public static final int ENEMY_COUNT = 3;
     public static final int MAX_HEALTH = 3;
@@ -70,6 +72,15 @@ public class RelicHuntGameBackend {
         this.player1Profile = player1;
         this.player2Profile = player2;
         this.competitive = competitive;
+        reset();
+    }
+    
+    // MiniAdventure interface implementation
+    @Override
+    public void initialize(User player1, User player2, Map<String, Object> settings) {
+        this.player1Profile = player1;
+        this.player2Profile = player2;
+        this.competitive = settings != null && "competitive".equals(settings.get("mode"));
         reset();
     }
 
@@ -330,4 +341,35 @@ public class RelicHuntGameBackend {
     public int getRelicsCollected() { return relicsCollected; }
     public int getTotalRelics() { return RELIC_COUNT; }
     public boolean isCompetitive() { return competitive; }
+    
+    // MiniAdventure interface implementation (additional methods only)
+    @Override
+    public String getName() {
+        return "Relic Hunt";
+    }
+    
+    @Override
+    public String toString() {
+        return getName(); // Use getName() for JList display
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Compete to collect ancient relics scattered throughout the realm. Use WASD or arrow keys to move.";
+    }
+    
+    @Override
+    public RealmSpace getRealm() {
+        return realm;
+    }
+    
+    @Override
+    public boolean supportsCoOp() {
+        return true;
+    }
+    
+    @Override
+    public boolean supportsCompetitive() {
+        return true;
+    }
 }
