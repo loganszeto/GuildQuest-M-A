@@ -10,6 +10,8 @@ public class TimedRaidGameBackend extends RelicHuntGameBackend {
     private int timeLimitSeconds = DEFAULT_TIME_LIMIT_SECONDS;
     private long startTimeMs = -1L;
     private boolean timedOut = false;
+    /** Realm-local time mapping (default identity = wall clock). */
+    private LocalTimeRule localTimeRule = IdentityLocalTimeRule.INSTANCE;
 
     @Override
     public void start() {
@@ -40,12 +42,24 @@ public class TimedRaidGameBackend extends RelicHuntGameBackend {
         return super.isLost();
     }
 
+    public void setLocalTimeRule(LocalTimeRule rule) {
+        this.localTimeRule = rule != null ? rule : IdentityLocalTimeRule.INSTANCE;
+    }
+
+    public LocalTimeRule getLocalTimeRule() {
+        return localTimeRule;
+    }
+
     public int getTimeRemainingSeconds() {
         if (startTimeMs < 0L) {
             return timeLimitSeconds;
         }
-        long elapsedMs = System.currentTimeMillis() - startTimeMs;
-        int remaining = timeLimitSeconds - (int) (elapsedMs / 1000L);
+        long now = System.currentTimeMillis();
+        long realmElapsedMs = localTimeRule.convert(now) - localTimeRule.convert(startTimeMs);
+        if (realmElapsedMs < 0L) {
+            realmElapsedMs = 0L;
+        }
+        int remaining = timeLimitSeconds - (int) (realmElapsedMs / 1000L);
         return Math.max(0, remaining);
     }
 
