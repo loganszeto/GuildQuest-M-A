@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
 import Backend.RelicHuntGameBackend;
+import Backend.TimedRaidGameBackend;
 import Backend.User;
 import Backend.RealmSpace;
 import Backend.SpriteManager;
@@ -22,6 +23,8 @@ public class RelicHuntGameScreen extends JPanel {
     private JLabel statusLabel;
     private JLabel currentPlayerLabel;
     private JLabel gameInfoLabel;
+    private JProgressBar player1HealthBar;
+    private JProgressBar player2HealthBar;
     private JTextArea gameLog;
     private JButton backButton;
     private JButton resetButton;
@@ -35,6 +38,7 @@ public class RelicHuntGameScreen extends JPanel {
     // Sprite rendering
     private SpriteBoardPanel boardPanel;
     private SpriteManager spriteManager;
+    private Timer uiTickTimer;
     
     public RelicHuntGameScreen(GMAEGUI mainGUI) {
         this.mainGUI = mainGUI;
@@ -42,6 +46,7 @@ public class RelicHuntGameScreen extends JPanel {
         initializeComponents();
         setupLayout();
         setupEventHandlers();
+        setupUiTickTimer();
     }
     
     private void initializeComponents() {
@@ -55,9 +60,16 @@ public class RelicHuntGameScreen extends JPanel {
         
         currentPlayerLabel = new JLabel("Press Start to begin", JLabel.CENTER);
         currentPlayerLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        currentPlayerLabel.setForeground(Color.WHITE);
         
         gameInfoLabel = new JLabel("Select an adventure from the menu", JLabel.CENTER);
         gameInfoLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+        gameInfoLabel.setForeground(Color.WHITE);
+
+        player1HealthBar = new JProgressBar(0, RelicHuntGameBackend.MAX_HEALTH);
+        player2HealthBar = new JProgressBar(0, RelicHuntGameBackend.MAX_HEALTH);
+        styleHealthBar(player1HealthBar, "P1 Health");
+        styleHealthBar(player2HealthBar, "P2 Health");
         
         gameLog = new JTextArea(8, 30);
         gameLog.setEditable(false);
@@ -111,6 +123,20 @@ public class RelicHuntGameScreen extends JPanel {
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.BOLD, 12));
     }
+
+    private void styleHealthBar(JProgressBar bar, String title) {
+        bar.setStringPainted(true);
+        bar.setForeground(new Color(60, 180, 75));
+        bar.setBackground(new Color(70, 70, 90));
+        bar.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(255, 215, 0), 1),
+            title,
+            javax.swing.border.TitledBorder.CENTER,
+            javax.swing.border.TitledBorder.TOP,
+            new Font("Arial", Font.BOLD, 11),
+            Color.WHITE
+        ));
+    }
     
     private void setupLayout() {
         setLayout(new BorderLayout());
@@ -122,6 +148,12 @@ public class RelicHuntGameScreen extends JPanel {
         topPanel.add(statusLabel);
         topPanel.add(currentPlayerLabel);
         topPanel.add(gameInfoLabel);
+
+        JPanel healthPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        healthPanel.setBackground(new Color(20, 20, 40));
+        healthPanel.setBorder(BorderFactory.createEmptyBorder(4, 8, 8, 8));
+        healthPanel.add(player1HealthBar);
+        healthPanel.add(player2HealthBar);
         
         // Center panel - game board and log
         JPanel centerPanel = new JPanel(new BorderLayout());
@@ -139,7 +171,12 @@ public class RelicHuntGameScreen extends JPanel {
         bottomPanel.add(resetButton);
         bottomPanel.add(backButton);
         
-        add(topPanel, BorderLayout.NORTH);
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.setBackground(new Color(20, 20, 40));
+        northPanel.add(topPanel, BorderLayout.NORTH);
+        northPanel.add(healthPanel, BorderLayout.SOUTH);
+
+        add(northPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
     }
@@ -152,6 +189,23 @@ public class RelicHuntGameScreen extends JPanel {
             }
         });
         setFocusable(true);
+    }
+
+    private void setupUiTickTimer() {
+        uiTickTimer = new Timer(500, e -> {
+            if (game == null || !game.isActive()) {
+                return;
+            }
+            if (game instanceof TimedRaidGameBackend) {
+                TimedRaidGameBackend timedRaid = (TimedRaidGameBackend) game;
+                if (timedRaid.isTimedOut()) {
+                    handleTimedRaidTimeout();
+                    return;
+                }
+            }
+            updateDisplay();
+        });
+        uiTickTimer.start();
     }
     
     private class SpriteBoardPanel extends JPanel {
@@ -296,15 +350,18 @@ public class RelicHuntGameScreen extends JPanel {
         // Don't auto-start - let user click start button
         
         gameLog.setText("");
-        appendToGameLog("=== Relic Hunt Adventure Ready! ===");
+        appendToGameLog("=== " + game.getName() + " Adventure Ready! ===");
         appendToGameLog("Mode: " + (competitive ? "Competitive" : "Co-op"));
         appendToGameLog("Player 1: " + player1.getUsername());
         appendToGameLog("Player 2: " + player2.getUsername());
         appendToGameLog("Click 'Start Game' to begin!");
         appendToGameLog("Use WASD or Arrow Keys to move");
         appendToGameLog("Collect all " + game.getTotalRelics() + " relics while avoiding enemies!");
+        if (game instanceof TimedRaidGameBackend) {
+            appendToGameLog("Timed Raid rule: finish before the timer reaches 0.");
+        }
         
-        statusLabel.setText("Relic Hunt - Ready to Start!");
+        statusLabel.setText(game.getName() + " - Ready to Start!");
         startButton.setEnabled(true);
         updateDisplay();
         requestFocus();
@@ -351,6 +408,8 @@ public class RelicHuntGameScreen extends JPanel {
             // Check for game completion
             if (game.isComplete()) {
                 handleGameComplete();
+            } else if (game instanceof TimedRaidGameBackend && ((TimedRaidGameBackend) game).isTimedOut()) {
+                handleTimedRaidTimeout();
             } else if (game.isLost() != -1) {
                 handleGameOver(game.isLost());
             }
@@ -362,24 +421,39 @@ public class RelicHuntGameScreen extends JPanel {
     }
     
     private void handleGameComplete() {
-        game.start(); // Reset for new game
+        game.reset(); // Keep game inactive until Start Game is clicked again.
         String winner = game.getWinner() == 1 ? "Player 1" : (game.getWinner() == 2 ? "Player 2" : "Team");
         JOptionPane.showMessageDialog(this, "Congratulations " + winner + "! You collected all relics!", "Victory!", JOptionPane.INFORMATION_MESSAGE);
         appendToGameLog("=== Victory! ===");
         appendToGameLog("Click 'Start Game' to play again!");
         startButton.setEnabled(true);
-        statusLabel.setText("Relic Hunt - Victory! Ready for another game?");
+        statusLabel.setText(game.getName() + " - Victory! Ready for another game?");
         updateDisplay();
     }
     
     private void handleGameOver(int loser) {
-        game.start(); // Reset for new game
+        game.reset(); // Keep game inactive until Start Game is clicked again.
         String loserName = loser == 1 ? "Player 1" : "Player 2";
         JOptionPane.showMessageDialog(this, loserName + " ran out of health! Game Over!", "Game Over", JOptionPane.WARNING_MESSAGE);
         appendToGameLog("=== Game Over! ===");
         appendToGameLog("Click 'Start Game' to try again!");
         startButton.setEnabled(true);
-        statusLabel.setText("Relic Hunt - Game Over! Ready to try again?");
+        statusLabel.setText(game.getName() + " - Game Over! Ready to try again?");
+        updateDisplay();
+    }
+
+    private void handleTimedRaidTimeout() {
+        game.reset(); // Keep timer stopped until Start Game is clicked.
+        JOptionPane.showMessageDialog(
+            this,
+            "Time ran out before all relics were collected!",
+            "Timed Raid Failed",
+            JOptionPane.WARNING_MESSAGE
+        );
+        appendToGameLog("=== Timed Raid Failed: Time expired ===");
+        appendToGameLog("Click 'Start Game' to try again!");
+        startButton.setEnabled(true);
+        statusLabel.setText("Timed Raid - Time expired. Ready to retry?");
         updateDisplay();
     }
     
@@ -391,11 +465,23 @@ public class RelicHuntGameScreen extends JPanel {
         currentPlayerLabel.setText("Current Player: " + currentPlayerUser.getUsername() + " (Player " + currentPlayer + ")");
         
         if (game.isActive()) {
-            gameInfoLabel.setText("Relics: " + game.getRelicsCollected() + "/" + game.getTotalRelics() + 
+            String info = "Relics: " + game.getRelicsCollected() + "/" + game.getTotalRelics() + 
                 " | P1 Health: " + game.getPlayerHealth(1) + 
                 " | P2 Health: " + game.getPlayerHealth(2) + 
-                " | Mode: " + (game.isCompetitive() ? "Competitive" : "Co-op"));
+                " | Mode: " + (game.isCompetitive() ? "Competitive" : "Co-op");
+            if (game instanceof TimedRaidGameBackend) {
+                TimedRaidGameBackend timedRaid = (TimedRaidGameBackend) game;
+                info += " | Time: " + timedRaid.getTimeRemainingSeconds() + "s";
+            }
+            gameInfoLabel.setText(info);
         }
+
+        int p1Health = game.getPlayerHealth(1);
+        int p2Health = game.getPlayerHealth(2);
+        player1HealthBar.setValue(p1Health);
+        player2HealthBar.setValue(p2Health);
+        player1HealthBar.setString(p1Health + "/" + RelicHuntGameBackend.MAX_HEALTH);
+        player2HealthBar.setString(p2Health + "/" + RelicHuntGameBackend.MAX_HEALTH);
         
         boardPanel.repaint();
     }

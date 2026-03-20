@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import Backend.NPCCharacter;
 import Backend.RealmSpace;
 import Backend.Tiles.*;
 

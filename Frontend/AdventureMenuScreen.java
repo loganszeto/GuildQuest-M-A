@@ -4,18 +4,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import Backend.User;
 import Backend.RealmSpace;
-import Backend.RelicHuntGameBackend;
 
 public class AdventureMenuScreen extends JPanel {
     private GMAEGUI mainGUI;
     private JButton addQuestButton;
     private JButton backButton;
     private JButton startAdventureButton;
+    private JButton settingsButton;
     private JLabel titleLabel;
     private JList<MiniAdventure> adventureList;
     private DefaultListModel<MiniAdventure> adventureListModel;
@@ -32,10 +31,12 @@ public class AdventureMenuScreen extends JPanel {
     
     // Game manager
     private TwoPlayerGameManager gameManager;
+    private AccessControlService accessControlService;
     
     public AdventureMenuScreen(GMAEGUI mainGUI) {
         this.mainGUI = mainGUI;
         this.gameManager = new TwoPlayerGameManager();
+        this.accessControlService = new AccessControlService();
         initializeComponents();
         setupLayout();
         setupEventHandlers();
@@ -52,6 +53,7 @@ public class AdventureMenuScreen extends JPanel {
         addQuestButton = new JButton("Add Adventure");
         backButton = new JButton("Retreat");
         startAdventureButton = new JButton("Begin Selected Adventure");
+        settingsButton = new JButton("Settings");
         titleLabel = new JLabel("Mini-Adventure Menu");
         deleteAdventureButton = new JButton("Delete Adventure");
         
@@ -85,6 +87,7 @@ public class AdventureMenuScreen extends JPanel {
         styleButton(addQuestButton);
         styleButton(backButton);
         styleButton(startAdventureButton);
+        styleButton(settingsButton);
         styleButton(deleteAdventureButton);
         
         loadRealms();
@@ -142,6 +145,7 @@ public class AdventureMenuScreen extends JPanel {
         
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         controlPanel.setBackground(new Color(45, 45, 80));
+        controlPanel.add(settingsButton);
         controlPanel.add(addQuestButton);
         
         centerPanel.add(questPanel, BorderLayout.CENTER);
@@ -182,6 +186,13 @@ public class AdventureMenuScreen extends JPanel {
                 handleStartAdventure();
             }
         });
+
+        settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleSettings();
+            }
+        });
         
         deleteAdventureButton.addActionListener(new ActionListener() {
             @Override
@@ -210,47 +221,10 @@ public class AdventureMenuScreen extends JPanel {
     }
     
     private void loadDefaultAdventures() {
-        final RealmSpace defaultRealm;
-        RealmSpace selectedRealm = (RealmSpace) realmSelector.getSelectedItem();
-        if (selectedRealm == null) {
-            defaultRealm = new RealmSpace("Mystic Realms");
-        } else {
-            defaultRealm = selectedRealm;
+        List<MiniAdventure> adventures = AdventureRegistry.createDefaultAdventures();
+        for (MiniAdventure adventure : adventures) {
+            adventureListModel.addElement(adventure);
         }
-        
-        adventureListModel.addElement(new RelicHuntGameBackend());
-        
-        // Add more sample adventures
-        adventureListModel.addElement(new MiniAdventure() {
-            @Override
-            public void initialize(Backend.User p1, Backend.User p2, Map<String, Object> settings) {}
-            @Override
-            public void start() {}
-            @Override
-            public boolean acceptPlayerInput(int playerNum, String input) { return false; }
-            @Override
-            public void advanceTurn() {}
-            @Override
-            public Map<String, Object> getCurrentState() { return new HashMap<>(); }
-            @Override
-            public boolean isComplete() { return false; }
-            @Override
-            public int getWinner() { return 0; }
-            @Override
-            public void reset() {}
-            @Override
-            public String getName() { return "Timed Raid"; }
-            @Override
-            public String getDescription() { return "Complete objectives before time runs out!"; }
-            @Override
-            public RealmSpace getRealm() { return defaultRealm; }
-            @Override
-            public boolean supportsCoOp() { return true; }
-            @Override
-            public boolean supportsCompetitive() { return false; }
-            @Override
-            public String toString() { return getName(); } // Fix display name
-        });
     }
     
     private void loadRealms() {
@@ -268,6 +242,7 @@ public class AdventureMenuScreen extends JPanel {
         RealmSpace selectedRealm = (RealmSpace) realmSelector.getSelectedItem();
         if (selectedRealm != null) {
             currentRealmLabel.setText("Current Realm: " + selectedRealm.getName());
+            mainGUI.getSettings().setCurrentRealm(selectedRealm);
         }
     }
     
@@ -311,11 +286,21 @@ public class AdventureMenuScreen extends JPanel {
         }
         
         // Set up and start the game
-        boolean success = gameManager.setupGame(player1, player2, selectedAdventure, isCompetitive);
+        if (!accessControlService.canPerform(AccessControlService.Action.START_ADVENTURE, player1, player1)) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Access denied: only host can start adventures.",
+                "Permission Denied",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        MiniAdventure secureAdventure = new SecureMiniAdventureProxy(selectedAdventure);
+        boolean success = gameManager.setupGame(player1, player2, secureAdventure, isCompetitive);
         
         if (success) {
             // Start the game using the new GameScreen
-            mainGUI.showGameScreen(selectedAdventure, player1, player2, isCompetitive);
+            mainGUI.showGameScreen(secureAdventure, player1, player2, isCompetitive);
         }
     }
     
@@ -332,6 +317,15 @@ public class AdventureMenuScreen extends JPanel {
         );
         
         if (confirm == JOptionPane.YES_OPTION) {
+            if (!accessControlService.canPerform(AccessControlService.Action.DELETE_ADVENTURE, player1, player1)) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Access denied: only host can delete adventures.",
+                    "Permission Denied",
+                    JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
             adventureListModel.removeElement(selectedAdventure);
         }
     }
@@ -363,5 +357,9 @@ public class AdventureMenuScreen extends JPanel {
     
     private void handleRetreat() {
         mainGUI.showLoginScreen();
+    }
+
+    private void handleSettings() {
+        mainGUI.showSettingsScreen(player1, player2);
     }
 }

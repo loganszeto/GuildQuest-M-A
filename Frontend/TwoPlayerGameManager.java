@@ -54,8 +54,15 @@ public class TwoPlayerGameManager {
         if (!gameActive || currentAdventure == null) {
             return false;
         }
+        if (input == null) {
+            return false;
+        }
+        String sanitizedInput = input.trim().toLowerCase();
+        if (sanitizedInput.isEmpty() || sanitizedInput.length() > 16) {
+            return false;
+        }
         
-        boolean success = currentAdventure.acceptPlayerInput(currentPlayerTurn, input);
+        boolean success = currentAdventure.acceptPlayerInput(currentPlayerTurn, sanitizedInput);
         
         if (success) {
             // Check if adventure is complete
