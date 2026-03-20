@@ -349,7 +349,7 @@ public class AdventureMenuScreen extends JPanel {
     
     private void styleButton(JButton button) {
         button.setBackground(new Color(200, 50, 50));
-        button.setForeground(Color.WHITE);
+        button.setForeground(Color.BLACK);
         button.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         button.setBorder(BorderFactory.createLineBorder(new Color(255, 100, 100), 2));
         button.setFocusPainted(false);

@@ -1,12 +1,12 @@
 # GuildQuest Mini-Adventure Environment (GMAE)
+Nathaniel Heit, Lance Vu, Logan Szeto, Grace Jong, Maiella Nuqui
 
 ## Run
 
 From project root:
 
 ```bash
-javac Frontend/*.java Backend/*.java Backend/Tiles/*.java Backend/Maps/*.java
-java Frontend.GMAEGUI
+java -jar GMAE.jar
 ```
 
 ## Requirements

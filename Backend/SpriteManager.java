@@ -1,12 +1,11 @@
 package Backend;
 
+import Backend.Tiles.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
-
-import Backend.Tiles.*;
 
 /**
  * Manages sprite loading and mapping for different tile types
@@ -31,17 +30,24 @@ public class SpriteManager {
     }
     
     private void loadSpritesheet() {
-        try {
-            // Load the spritesheet from the root directory
-            spritesheet = ImageIO.read(getClass().getClassLoader().getResourceAsStream("spritesheet.png"));
-            if (spritesheet == null) {
-                // Try loading from file system
-                spritesheet = ImageIO.read(new java.io.File("spritesheet.png"));
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to load spritesheet: " + e.getMessage());
-            // Create a fallback spritesheet with colored squares
+    try {
+        // Load the spritesheet from the root directory
+        var input = getClass().getClassLoader().getResourceAsStream("spritesheet.png");
+
+        if (input != null) {
+            // Try loading from file system
+            spritesheet = ImageIO.read(input);
+        } else {
+            spritesheet = ImageIO.read(new java.io.File("spritesheet.png"));
+        }
+
+        if (spritesheet == null) {
             createFallbackSpritesheet();
+        }
+    } catch (IOException e) {
+        // Create a fallback spritesheet with colored squares
+        System.err.println("Failed to load spritesheet: " + e.getMessage());
+        createFallbackSpritesheet();
         }
     }
     

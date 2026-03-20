@@ -1,8 +1,8 @@
 package Frontend;
 
 import Backend.User;
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class SettingsScreen extends JPanel {
     private final GMAEGUI mainGUI;
@@ -128,7 +128,7 @@ public class SettingsScreen extends JPanel {
     private JButton createButton(String text) {
         JButton b = new JButton(text);
         b.setBackground(new Color(200, 50, 50));
-        b.setForeground(Color.WHITE);
+        b.setForeground(Color.BLACK);
         b.setFont(new Font("Old English Text MT", Font.BOLD, 14));
         b.setBorder(BorderFactory.createLineBorder(new Color(255, 100, 100), 2));
         b.setFocusPainted(false);
